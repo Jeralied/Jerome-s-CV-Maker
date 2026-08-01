@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="style.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JeromeCV — Build a CV that fits the job</title>
@@ -10,272 +9,127 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   :root{
-    --ink:#161b22;
-    --paper:#f7f5f0;
-    --paper-dim:#efece4;
-    --paper-line:#ddd7c8;
-    --slate:#31353c;
-    --slate-soft:#6b7078;
-    --slate-faint:#9a9d9e;
-    --brand:#33507a;
-    --brand-dark:#20344f;
-    --brand-tint:#e7edf4;
-    --tech:#2f8f7e;
-    --tech-tint:#e6f2ef;
-    --cabin:#a5761e;
-    --cabin-tint:#f6efdd;
-    --bank:#7a2e33;
-    --bank-tint:#f4e6e7;
-    --radius:2px;
-    --font-display:'Fraunces', serif;
-    --font-body:'IBM Plex Sans', sans-serif;
-    --font-mono:'IBM Plex Mono', monospace;
+    --ink:#161b22; --paper:#f7f5f0; --paper-dim:#efece4; --paper-line:#ddd7c8;
+    --slate:#31353c; --slate-soft:#6b7078; --slate-faint:#9a9d9e;
+    --brand:#33507a; --brand-dark:#20344f; --brand-tint:#e7edf4;
+    --tech:#2f8f7e; --tech-tint:#e6f2ef; --cabin:#a5761e; --cabin-tint:#f6efdd;
+    --bank:#7a2e33; --bank-tint:#f4e6e7; --radius:2px;
+    --font-display:'Fraunces', serif; --font-body:'IBM Plex Sans', sans-serif; --font-mono:'IBM Plex Mono', monospace;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    font-family:var(--font-body);
-    background:var(--ink);
-    color:var(--slate);
-    min-height:100vh;
-    -webkit-font-smoothing:antialiased;
-  }
-  ::selection{background:var(--brand); color:#fff;}
-  :focus-visible{outline:2px solid var(--brand); outline-offset:2px;}
-  button{font-family:inherit; cursor:pointer;}
-
+  body{ font-family:var(--font-body); background:var(--ink); color:var(--slate); margin:0; -webkit-font-smoothing:antialiased; }
  .app{ max-width:1280px; margin:0 auto; background:var(--paper); min-height:100vh; box-shadow:0 0 80px rgba(0,0,0,0.35); }
  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 40px; border-bottom:1px solid var(--paper-line); }
  .brand-mark{ display:flex; align-items:baseline; gap:10px; }
- .brand-mark.glyph{ /* FIXED */ font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--ink); letter-spacing:-0.02em; }
+ .brand-mark.glyph{ font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--ink); letter-spacing:-0.02em; } /* FIXED SPACE */
  .brand-mark.glyph em{ font-style:normal; color:var(--brand); }
  .brand-eyebrow{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--slate-soft); border-left:1px solid var(--paper-line); padding-left:10px; }
- .step-indicator{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; color:var(--slate-soft); display:flex; gap:6px; align-items:center; }
- .step-indicator b{color:var(--ink); font-weight:600;}
-
+ .step-indicator{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; color:var(--slate-soft); }
  .hero{ padding:64px 40px 20px; }
  .hero-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--brand); margin-bottom:18px; }
- .hero h1{ font-family:var(--font-display); font-weight:600; font-size:clamp(34px, 5vw, 56px); line-height:1.05; letter-spacing:-0.01em; color:var(--ink); margin:0 0 6px; max-width:14ch; }
- .hero.sub{ font-family:var(--font-display); font-style:italic; font-weight:500; font-size:clamp(18px, 2.4vw, 24px); color:var(--slate-soft); margin:0 0 44px; } /* FIXED */
-
+ .hero h1{ font-family:var(--font-display); font-weight:600; font-size:clamp(34px, 5vw, 56px); line-height:1.05; color:var(--ink); margin:0 0 6px; }
+ .hero.sub{ font-family:var(--font-display); font-style:italic; font-weight:500; font-size:clamp(18px, 2.4vw, 24px); color:var(--slate-soft); margin:0 0 44px; } /* FIXED SPACE */
  .tracks{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; padding:0 40px 56px; }
- .track-card{ position:relative; background:#fff; border:1px solid var(--paper-line); border-radius:var(--radius); padding:26px 24px 22px; text-align:left; transition:transform.18s ease, box-shadow.18s ease, border-color.18s ease; overflow:hidden; } /* FIXED */
+ .track-card{ background:#fff; border:1px solid var(--paper-line); padding:26px 24px 22px; text-align:left; transition:transform 0.18s ease, box-shadow 0.18s ease; cursor:pointer; } /* FIXED */
  .track-card:hover{ transform:translateY(-3px); box-shadow:0 14px 30px -18px rgba(22,27,34,0.35); }
- .track-card.selected{ border-color:var(--accent, var(--brand)); box-shadow:0 0 0 1px var(--accent, var(--brand)) inset, 0 14px 30px -18px rgba(22,27,34,0.35); }
- .track-card.swatch{ height:5px; width:38px; background:var(--accent, var(--brand)); margin-bottom:16px; border-radius:1px; } /* FIXED */
- .track-card.ticon{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent, var(--brand)); margin-bottom:8px; display:block; } /* FIXED */
+ .track-card.selected{ border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset; }
+ .track-card.swatch{ height:5px; width:38px; background:var(--accent); margin-bottom:16px; } /* FIXED SPACE */
+ .track-card.ticon{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; display:block; } /* FIXED SPACE */
  .track-card h3{ font-family:var(--font-display); font-size:21px; font-weight:600; color:var(--ink); margin:0 0 8px; }
- .track-card p{ font-size:13.5px; line-height:1.55; color:var(--slate-soft); margin:0 0 16px; }
- .track-card.mini-preview{ font-family:var(--font-mono); font-size:10px; color:var(--slate-faint); border-top:1px dashed var(--paper-line); padding-top:12px; display:flex; justify-content:space-between; } /* FIXED */
- .track-card.mini-preview b{color:var(--accent, var(--brand)); font-weight:600;}
  .hero-actions{ display:flex; justify-content:flex-end; padding:0 40px 60px; }
-
- .btn{ font-family:var(--font-body); font-weight:600; font-size:13.5px; padding:12px 22px; border-radius:var(--radius); border:1px solid transparent; display:inline-flex; align-items:center; gap:8px; transition:transform.12s ease, opacity.12s ease; } /* FIXED */
- .btn:active{transform:scale(0.98);}
+ .btn{ font-family:var(--font-body); font-weight:600; font-size:13.5px; padding:12px 22px; border:1px solid transparent; display:inline-flex; gap:8px; transition:transform 0.12s ease; cursor:pointer;} /* FIXED */
  .btn-primary{ background:var(--ink); color:var(--paper); }
- .btn-primary:hover{background:var(--brand-dark);}
  .btn-primary:disabled{ background:var(--paper-dim); color:var(--slate-faint); cursor:not-allowed; }
  .btn-ghost{ background:transparent; color:var(--slate); border-color:var(--paper-line); }
- .btn-ghost:hover{border-color:var(--slate-soft);}
  .btn-outline{ background:#fff; color:var(--ink); border-color:var(--ink); }
- .btn-outline:hover{background:var(--ink); color:#fff;}
-
- .workspace{ display:none; grid-template-columns:minmax(320px, 420px) 1fr; gap:0; }
+ .workspace{ display:none; grid-template-columns:420px 1fr; }
  .workspace.active{display:grid;}
- .panel-form{ padding:36px 36px 100px; border-right:1px solid var(--paper-line); max-height:calc(100vh - 73px); overflow-y:auto; }
- .form-eyebrow{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent, var(--brand)); margin:30px 0 14px; display:flex; align-items:center; gap:10px; }
- .form-eyebrow::after{ content:''; flex:1; height:1px; background:var(--paper-line); }
- .field{margin-bottom:14px;}
- .field label{ display:block; font-size:11.5px; font-weight:600; color:var(--slate-soft); margin-bottom:5px; }
- .field input,.field textarea{ width:100%; font-family:var(--font-body); font-size:14px; padding:10px 12px; border:1px solid var(--paper-line); border-radius:var(--radius); background:#fff; color:var(--ink); }
- .field textarea{resize:vertical; min-height:64px; line-height:1.5;}
+ .panel-form{ padding:36px; border-right:1px solid var(--paper-line); max-height:calc(100vh - 73px); overflow-y:auto; }
+ .form-eyebrow{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin:30px 0 14px; display:flex; align-items:center; gap:10px; }
+ .field{margin-bottom:14px;}.field label{ display:block; font-size:11.5px; font-weight:600; color:var(--slate-soft); margin-bottom:5px; }
+ .field input,.field textarea{ width:100%; font-family:var(--font-body); font-size:14px; padding:10px 12px; border:1px solid var(--paper-line); background:#fff; }
  .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
- .repeat-block{ border:1px solid var(--paper-line); border-radius:var(--radius); padding:16px 16px 6px; margin-bottom:12px; background:#fdfcfa; position:relative; }
- .repeat-remove{ position:absolute; top:10px; right:10px; background:none; border:none; color:var(--slate-faint); font-size:16px; line-height:1; padding:4px; }
- .add-row-btn{ width:100%; background:transparent; border:1px dashed var(--paper-line); color:var(--slate-soft); font-size:12.5px; font-weight:600; padding:10px; border-radius:var(--radius); margin-bottom:6px; }
+ .repeat-block{ border:1px solid var(--paper-line); padding:16px; margin-bottom:12px; background:#fdfcfa; position:relative; }
+ .repeat-remove{ position:absolute; top:10px; right:10px; background:none; border:none; font-size:16px; cursor:pointer; }
+ .add-row-btn{ width:100%; background:transparent; border:1px dashed var(--paper-line); padding:10px; font-weight:600; cursor:pointer; }
  .chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
- .chip{ background:var(--accent-tint, var(--brand-tint)); color:var(--accent, var(--brand)); font-size:12px; font-weight:600; padding:5px 10px 5px 12px; border-radius:20px; display:flex; align-items:center; gap:6px; }
- .chip button{ background:none; border:none; color:inherit; font-size:13px; line-height:1; opacity:0.6; padding:0; }
- .photo-upload{ display:flex; align-items:center; gap:14px; margin-bottom:6px; }
- .photo-circle{ width:64px; height:64px; border-radius:50%; background:var(--paper-dim); border:1px solid var(--paper-line); display:flex; align-items:center; justify-content:center; overflow:hidden; font-family:var(--font-mono); font-size:9px; color:var(--slate-faint); text-align:center; flex-shrink:0; }
+ .chip{ background:var(--accent-tint); color:var(--accent); font-size:12px; font-weight:600; padding:5px 10px; border-radius:20px; display:flex; align-items:center; gap:6px; }
+ .chip button{ background:none; border:none; cursor:pointer; }
+ .photo-circle{ width:64px; height:64px; border-radius:50%; background:var(--paper-dim); border:1px solid var(--paper-line); overflow:hidden; }
  .photo-circle img{width:100%; height:100%; object-fit:cover;}
- .upload-label{ font-size:12.5px; font-weight:600; color:var(--brand); border:1px solid var(--paper-line); padding:8px 14px; border-radius:var(--radius); display:inline-block; }
- .form-footer{ margin-top:34px; display:flex; gap:10px; }
-
- .panel-preview{ background:var(--paper-dim); padding:36px; display:flex; justify-content:center; align-items:flex-start; max-height:calc(100vh - 73px); overflow-y:auto; }
- .sheet-frame{ width:100%; max-width:600px; }
- .preview-caption{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--slate-faint); margin-bottom:14px; display:flex; justify-content:space-between; }
- .preview-caption b{color:var(--accent, var(--brand));}
-
- .sheet{ background:#fff; box-shadow:0 20px 45px -20px rgba(22,27,34,0.3); padding:46px 42px; min-height:760px; font-family:var(--font-body); color:var(--slate); animation:sheetIn.3s ease; } /* FIXED */
-  @keyframes sheetIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
-
- .sheet h1.cv-name{ font-family:var(--font-display); font-size:30px; font-weight:600; color:var(--ink); margin:0 0 4px; }
- .sheet.cv-role{ font-family:var(--font-mono); font-size:12px; letter-spacing:0.06em; color:var(--accent, var(--brand)); text-transform:uppercase; margin-bottom:14px; }
+ .panel-preview{ background:var(--paper-dim); padding:36px; overflow-y:auto; }
+ .sheet{ background:#fff; box-shadow:0 20px 45px -20px rgba(22,27,34,0.3); padding:46px 42px; min-height:760px; }
+ .sheet h1.cv-name{ font-family:var(--font-display); font-size:30px; font-weight:600; margin:0 0 4px; }
+ .sheet.cv-role{ font-family:var(--font-mono); font-size:12px; color:var(--accent); text-transform:uppercase; margin-bottom:14px; }
  .sheet.cv-contact{ font-size:12px; color:var(--slate-soft); display:flex; flex-wrap:wrap; gap:4px 14px; margin-bottom:22px; }
- .sheet.cv-section-title{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent, var(--brand)); margin:22px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--paper-line); }
- .sheet p.cv-summary{font-size:13.5px; line-height:1.65; margin:0;}
- .sheet.cv-entry{margin-bottom:14px;}
- .sheet.cv-entry-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
- .sheet.cv-entry-title{font-weight:600; font-size:14px; color:var(--ink);}
- .sheet.cv-entry-org{font-size:12.5px; color:var(--slate-soft);}
- .sheet.cv-entry-date{font-family:var(--font-mono); font-size:11px; color:var(--slate-faint); white-space:nowrap;}
- .sheet.cv-entry-desc{font-size:12.5px; line-height:1.6; color:var(--slate); margin:4px 0 0;}
+ .sheet.cv-section-title{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin:22px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--paper-line); }
  .sheet.cv-skill-row{display:flex; flex-wrap:wrap; gap:8px;}
- .sheet.cv-skill{ font-size:11.5px; font-weight:600; padding:4px 10px; border-radius:2px; background:var(--accent-tint, var(--brand-tint)); color:var(--accent, var(--brand)); }
- .sheet.placeholder-text{color:var(--slate-faint); font-style:italic; font-size:12.5px;}
-
+ .sheet.cv-skill{ font-size:11.5px; font-weight:600; padding:4px 10px; background:var(--accent-tint); color:var(--accent); }
+ .sheet.placeholder-text{color:var(--slate-faint); font-style:italic;}
  .sheet.layout-tech{font-family:var(--font-mono);}
- .sheet.layout-tech.cv-name{font-weight:700; letter-spacing:-0.01em; font-size:24px;}
- .sheet.layout-tech.cv-skill{border-radius:0; font-family:var(--font-mono); font-size:10.5px;}
- .sheet.layout-tech.cv-section-title{border-bottom:2px solid var(--accent);}
-
- .sheet.layout-cabin{padding-top:38px;}
- .sheet.layout-cabin.cv-header-row{ display:flex; gap:20px; align-items:flex-start; margin-bottom:18px; }
- .sheet.layout-cabin.cv-photo{ width:90px; height:90px; border-radius:8px; background:var(--paper-dim); flex-shrink:0; overflow:hidden; border:3px solid var(--accent); }
- .sheet.layout-cabin.cv-photo img{width:100%; height:100%; object-fit:cover;}
-
- .sheet.layout-bank.cv-name{ text-align:center; text-transform:uppercase; letter-spacing:0.04em; font-size:24px; }
- .sheet.layout-bank.cv-role{text-align:center;}
- .sheet.layout-bank.cv-contact{justify-content:center; border-bottom:2px solid var(--ink); padding-bottom:16px; margin-bottom:20px;}
- .sheet.layout-bank.cv-section-title{ text-align:left; border-bottom:2px solid var(--ink); font-family:var(--font-body); font-weight:700; letter-spacing:0.08em; }
-
- .review{ display:none; padding:44px 40px 80px; justify-content:center; }
+ .sheet.layout-cabin.cv-header-row{ display:flex; gap:20px; }
+ .sheet.layout-cabin.cv-photo{ width:90px; height:90px; border-radius:8px; border:3px solid var(--accent); overflow:hidden; }
+ .sheet.layout-bank.cv-name{ text-align:center; text-transform:uppercase; }
+ .sheet.layout-bank.cv-contact{justify-content:center; border-bottom:2px solid var(--ink); padding-bottom:16px;}
+ .review{ display:none; padding:44px 40px; justify-content:center; }
  .review.active{display:flex; flex-direction:column; align-items:center;}
- .review.review-actions{ display:flex; gap:10px; margin-bottom:28px; }
-
-  @media (max-width:900px){
-  .tracks{grid-template-columns:1fr;}
-  .workspace.active{grid-template-columns:1fr;}
-  }
+  @media (max-width:900px){.tracks{grid-template-columns:1fr;}.workspace.active{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
-
 <div class="app">
   <div class="topbar">
-    <div class="brand-mark">
-      <span class="glyph">Jerome<em>CV</em></span>
-      <span class="brand-eyebrow">Smart CV Builder</span>
-    </div>
+    <div class="brand-mark"><span class="glyph">Jerome<em>CV</em></span><span class="brand-eyebrow">Smart CV Builder</span></div>
     <div class="step-indicator" id="stepIndicator"><b>01</b> Choose track</div>
   </div>
-
-  <!-- STEP 1 -->
   <div id="step1">
-    <div class="hero">
-      <div class="hero-eyebrow">Three tracks, one profile</div>
-      <h1>Build a CV that fits the job.</h1>
-      <p class="sub">Not the other way around.</p>
-    </div>
+    <div class="hero"><div class="hero-eyebrow">Three tracks, one profile</div><h1>Build a CV that fits the job.</h1><p class="sub">Not the other way around.</p></div>
     <div class="tracks">
-      <button class="track-card" data-track="tech" style="--accent:#2f8f7e; --accent-tint:#e6f2ef;" onclick="selectTrack('tech')">
-        <span class="swatch"></span><span class="ticon">01 — Tech / CS</span>
-        <h3>Engineering &amp; Product</h3><p>No photo. Skills and projects lead. Built to pass an ATS scan first.</p>
-      </button>
-      <button class="track-card" data-track="cabin" style="--accent:#a5761e; --accent-tint:#f6efdd;" onclick="selectTrack('cabin')">
-        <span class="swatch"></span><span class="ticon">02 — Cabin Crew</span>
-        <h3>Airline &amp; Hospitality</h3><p>Photo top-left. Languages and personality lead.</p>
-      </button>
-      <button class="track-card" data-track="bank" style="--accent:#7a2e33; --accent-tint:#f4e6e7;" onclick="selectTrack('bank')">
-        <span class="swatch"></span><span class="ticon">03 — Banking / Corporate</span>
-        <h3>Finance &amp; Professional Services</h3><p>Conservative and exact. Education and experience lead.</p>
-      </button>
+      <button class="track-card" data-track="tech" style="--accent:#2f8f7e; --accent-tint:#e6f2ef;" onclick="selectTrack('tech')"><span class="swatch"></span><span class="ticon">01 — Tech / CS</span><h3>Engineering &amp; Product</h3><p>ATS friendly. No photo.</p></button>
+      <button class="track-card" data-track="cabin" style="--accent:#a5761e; --accent-tint:#f6efdd;" onclick="selectTrack('cabin')"><span class="swatch"></span><span class="ticon">02 — Cabin Crew</span><h3>Airline &amp; Hospitality</h3><p>Photo + Languages first.</p></button>
+      <button class="track-card" data-track="bank" style="--accent:#7a2e33; --accent-tint:#f4e6e7;" onclick="selectTrack('bank')"><span class="swatch"></span><span class="ticon">03 — Banking / Corporate</span><h3>Finance &amp; Professional</h3><p>Formal and conservative.</p></button>
     </div>
-    <div class="hero-actions">
-      <button class="btn btn-primary" id="continueBtn" disabled onclick="goToStep2()">Continue →</button>
-    </div>
+    <div class="hero-actions"><button class="btn btn-primary" id="continueBtn" disabled onclick="goToStep2()">Continue →</button></div>
   </div>
-
-  <!-- STEP 2 -->
   <div class="workspace" id="workspace">
     <div class="panel-form">
       <div class="form-eyebrow">Basics</div>
       <div class="field"><label>Full name</label><input id="fullName" oninput="render()"></div>
       <div class="field"><label>Target role</label><input id="roleTitle" oninput="render()"></div>
-      <div class="row2">
-        <div class="field"><label>Email</label><input id="email" oninput="render()"></div>
-        <div class="field"><label>Phone</label><input id="phone" oninput="render()"></div>
-      </div>
-      <div class="row2">
-        <div class="field"><label>Location</label><input id="location" oninput="render()"></div>
-        <div class="field"><label>LinkedIn</label><input id="linkedin" oninput="render()"></div>
-      </div>
-      <div class="field" id="photoField" style="display:none;">
-        <label>Photo</label>
-        <div class="photo-upload">
-          <div class="photo-circle" id="photoPreview">No photo</div>
-          <label class="upload-label">Upload<input type="file" accept="image/*" style="display:none" onchange="handlePhoto(event)"></label>
-        </div>
-      </div>
-      <div class="form-eyebrow">Summary</div>
-      <div class="field"><textarea id="summary" oninput="render()"></textarea></div>
+      <div class="row2"><div class="field"><label>Email</label><input id="email" oninput="render()"></div><div class="field"><label>Phone</label><input id="phone" oninput="render()"></div></div>
+      <div class="row2"><div class="field"><label>Location</label><input id="location" oninput="render()"></div><div class="field"><label>LinkedIn</label><input id="linkedin" oninput="render()"></div></div>
+      <div class="field" id="photoField" style="display:none;"><label>Photo</label><div style="display:flex; gap:14px;"><div class="photo-circle" id="photoPreview">No photo</div><label class="btn btn-ghost">Upload<input type="file" accept="image/*" style="display:none" onchange="handlePhoto(event)"></label></div></div>
+      <div class="form-eyebrow">Summary</div><div class="field"><textarea id="summary" rows="3" oninput="render()"></textarea></div>
       <div class="form-eyebrow">Experience</div><div id="experienceList"></div><button class="add-row-btn" onclick="addExperience()">+ Add experience</button>
       <div class="form-eyebrow">Education</div><div id="educationList"></div><button class="add-row-btn" onclick="addEducation()">+ Add education</button>
-      <div class="form-eyebrow">Skills</div>
-      <div class="field"><input id="skillInput" placeholder="Press Enter" onkeydown="handleSkillEnter(event)"><div class="chips" id="skillChips"></div></div>
-      <div class="form-footer">
-        <button class="btn btn-ghost" onclick="goToStep1()">← Back</button>
-        <button class="btn btn-primary" style="margin-left:auto" onclick="goToStep3()">Generate CV</button>
-      </div>
+      <div class="form-eyebrow">Skills</div><div class="field"><input id="skillInput" placeholder="Press Enter" onkeydown="handleSkillEnter(event)"><div class="chips" id="skillChips"></div></div>
+      <div class="form-footer" style="margin-top:34px; display:flex; gap:10px;"><button class="btn btn-ghost" onclick="goToStep1()">← Back</button><button class="btn btn-primary" style="margin-left:auto" onclick="goToStep3()">Generate CV</button></div>
     </div>
-    <div class="panel-preview">
-      <div class="sheet-frame">
-        <div class="preview-caption"><span>Live preview</span><b id="trackCaption">—</b></div>
-        <div class="sheet" id="sheetLive"></div>
-      </div>
-    </div>
+    <div class="panel-preview"><div><div class="preview-caption" style="font-family:var(--font-mono); font-size:10px; margin-bottom:14px;">Live preview <b id="trackCaption">—</b></div><div class="sheet" id="sheetLive"></div></div></div>
   </div>
-
-  <!-- STEP 3 -->
-  <div class="review" id="review">
-    <div class="review-actions">
-      <button class="btn btn-ghost" onclick="goToStep2()">← Edit info</button>
-      <button class="btn btn-outline" onclick="downloadPDF()">Download PDF</button>
-    </div>
-    <div class="sheet-frame"><div class="sheet" id="sheetFinal"></div></div>
-  </div>
+  <div class="review" id="review"><div style="display:flex; gap:10px; margin-bottom:28px;"><button class="btn btn-ghost" onclick="goToStep2()">← Edit info</button><button class="btn btn-outline" onclick="downloadPDF()">Download PDF</button></div><div><div class="sheet" id="sheetFinal"></div></div></div>
 </div>
-
 <script>
 let track = null; let photoData = null; let skills = [];
 let experiences = [{title:'', org:'', date:'', desc:''}];
 let educations = [{title:'', org:'', date:''}];
-
 const tint = {tech:'#e6f2ef', cabin:'#f6efdd', bank:'#f4e6e7'};
 const accent = {tech:'#2f8f7e', cabin:'#a5761e', bank:'#7a2e33'};
 const trackLabel = {tech:'Tech / CS', cabin:'Cabin Crew', bank:'Banking / Corporate'};
 
-function selectTrack(t){
-  track = t;
-  document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('selected'));
-  document.querySelector(`.track-card[data-track="${t}"]`).classList.add('selected');
-  document.getElementById('continueBtn').disabled = false;
-  document.getElementById('photoField').style.display = (t === 'cabin')? 'block' : 'none';
-}
+function selectTrack(t){ track = t; document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('selected')); document.querySelector(`.track-card[data-track="${t}"]`).classList.add('selected'); document.getElementById('continueBtn').disabled = false; document.getElementById('photoField').style.display = (t === 'cabin')? 'block' : 'none'; }
 function goToStep2(){ document.getElementById('step1').style.display = 'none'; document.getElementById('workspace').classList.add('active'); document.getElementById('stepIndicator').innerHTML = `<b>02</b> Tell us about you · ${trackLabel[track]}`; document.getElementById('trackCaption').textContent = trackLabel[track]; renderRepeaters(); render(); }
-function goToStep1(){ document.getElementById('step1').style.display = 'block'; document.getElementById('workspace').classList.remove('active'); document.getElementById('review').classList.remove('active'); document.getElementById('stepIndicator').innerHTML = `<b>01</b> Choose track`; }
-function goToStep3(){ document.getElementById('workspace').classList.remove('active'); document.getElementById('review').classList.add('active'); document.getElementById('stepIndicator').innerHTML = `<b>03</b> Review & download`; render(); }
-
+function goToStep1(){ document.getElementById('step1').style.display = 'block'; document.getElementById('workspace').classList.remove('active'); document.getElementById('review').classList.remove('active'); }
+function goToStep3(){ document.getElementById('workspace').classList.remove('active'); document.getElementById('review').classList.add('active'); render(); }
 function handlePhoto(e){ const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(ev){ photoData = ev.target.result; document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="">`; render(); }; reader.readAsDataURL(file); }
 function addExperience(){ experiences.push({title:'', org:'', date:'', desc:''}); renderRepeaters(); }
 function removeExperience(i){ experiences.splice(i,1); renderRepeaters(); render(); }
 function addEducation(){ educations.push({title:'', org:'', date:''}); renderRepeaters(); }
 function removeEducation(i){ educations.splice(i,1); renderRepeaters(); render(); }
-
 function renderRepeaters(){
-  document.getElementById('experienceList').innerHTML = experiences.map((exp, i) => `
-    <div class="repeat-block">${experiences.length > 1? `<button class="repeat-remove" onclick="removeExperience(${i})">×</button>` : ''}
-      <div class="row2"><div class="field"><label>Role</label><input value="${exp.title}" oninput="experiences[${i}].title=this.value; render()"></div><div class="field"><label>Company</label><input value="${exp.org}" oninput="experiences[${i}].org=this.value; render()"></div></div>
-      <div class="field"><label>Dates</label><input value="${exp.date}" oninput="experiences[${i}].date=this.value; render()"></div><div class="field"><label>What you did</label><textarea oninput="experiences[${i}].desc=this.value; render()">${exp.desc}</textarea></div>
-    </div>`).join('');
-  document.getElementById('educationList').innerHTML = educations.map((edu, i) => `
-    <div class="repeat-block">${educations.length > 1? `<button class="repeat-remove" onclick="removeEducation(${i})">×</button>` : ''}
-      <div class="field"><label>Qualification</label><input value="${edu.title}" oninput="educations[${i}].title=this.value; render()"></div>
-      <div class="row2"><div class="field"><label>Institution</label><input value="${edu.org}" oninput="educations[${i}].org=this.value; render()"></div><div class="field"><label>Year</label><input value="${edu.date}" oninput="educations[${i}].date=this.value; render()"></div></div>
-    </div>`).join('');
+  document.getElementById('experienceList').innerHTML = experiences.map((exp, i) => `<div class="repeat-block">${experiences.length > 1? `<button class="repeat-remove" onclick="removeExperience(${i})">×</button>` : ''}<div class="row2"><div class="field"><label>Role</label><input value="${exp.title}" oninput="experiences[${i}].title=this.value; render()"></div><div class="field"><label>Company</label><input value="${exp.org}" oninput="experiences[${i}].org=this.value; render()"></div></div><div class="field"><label>Dates</label><input value="${exp.date}" oninput="experiences[${i}].date=this.value; render()"></div><div class="field"><label>What you did</label><textarea oninput="experiences[${i}].desc=this.value; render()">${exp.desc}</textarea></div></div>`).join('');
+  document.getElementById('educationList').innerHTML = educations.map((edu, i) => `<div class="repeat-block">${educations.length > 1? `<button class="repeat-remove" onclick="removeEducation(${i})">×</button>` : ''}<div class="field"><label>Qualification</label><input value="${edu.title}" oninput="educations[${i}].title=this.value; render()"></div><div class="row2"><div class="field"><label>Institution</label><input value="${edu.org}" oninput="educations[${i}].org=this.value; render()"></div><div class="field"><label>Year</label><input value="${edu.date}" oninput="educations[${i}].date=this.value; render()"></div></div></div>`).join('');
 }
-
 function handleSkillEnter(e){ if(e.key === 'Enter' && e.target.value.trim()){ skills.push(e.target.value.trim()); e.target.value = ''; renderSkillChips(); render(); } }
 function removeSkill(i){ skills.splice(i,1); renderSkillChips(); render(); }
 function renderSkillChips(){ document.getElementById('skillChips').innerHTML = skills.map((s,i) => `<span class="chip">${s}<button onclick="removeSkill(${i})">×</button></span>`).join(''); }
@@ -288,23 +142,23 @@ function buildSheetHTML(){
   const summary = document.getElementById('summary').value;
   const contactBits = [email, phone, location, linkedin].filter(Boolean).join(' · ');
   const skillsHTML = skills.length? `<div class="cv-skill-row">${skills.map(s=>`<span class="cv-skill">${s}</span>`).join('')}</div>` : `<p class="placeholder-text">Add skills</p>`;
-  const expHTML = experiences.filter(e=>e.title||e.org).length? experiences.map(e => e.title||e.org? `<div class="cv-entry"><div class="cv-entry-head"><span class="cv-entry-title">${e.title||'Role'}${e.org? ' · '+`<span class="cv-entry-org">${e.org}</span>` : ''}</span><span class="cv-entry-date">${e.date}</span></div>${e.desc? `<p class="cv-entry-desc">${e.desc}</p>` : ''}</div>` : '').join('') : `<p class="placeholder-text">Add experience</p>`;
-  const eduHTML = educations.filter(e=>e.title||e.org).length? educations.map(e => e.title||e.org? `<div class="cv-entry"><div class="cv-entry-head"><span class="cv-entry-title">${e.title}</span><span class="cv-entry-date">${e.date}</span></div><span class="cv-entry-org">${e.org}</span></div>` : '').join('') : `<p class="placeholder-text">Add education</p>`;
+  const expHTML = experiences.filter(e=>e.title||e.org).length? experiences.map(e => `<div style="margin-bottom:12px;"><b>${e.title||'Role'}</b> · ${e.org||''}<div style="font-size:11px; color:#666;">${e.date}</div><p style="font-size:13px;">${e.desc}</p></div>`).join('') : `<p class="placeholder-text">Add experience</p>`;
+  const eduHTML = educations.filter(e=>e.title||e.org).length? educations.map(e => `<div style="margin-bottom:12px;"><b>${e.title}</b><div>${e.org}</div><div style="font-size:11px;">${e.date}</div></div>`).join('') : `<p class="placeholder-text">Add education</p>`;
 
   let headerRow = ''; let bodyOrder = ''; let layoutClass = '';
   if(track === 'tech'){
     layoutClass = 'layout-tech';
     headerRow = `<h1 class="cv-name">${name}</h1><div class="cv-role">${role}</div><div class="cv-contact">${contactBits}</div>`;
-    bodyOrder = `<div class="cv-section-title">Summary</div><p class="cv-summary">${summary||'Add summary'}</p>` + `<div class="cv-section-title">Skills</div>` + skillsHTML + `<div class="cv-section-title">Experience</div>` + expHTML + `<div class="cv-section-title">Education</div>` + eduHTML;
+    bodyOrder = `<div class="cv-section-title">Summary</div><p>${summary||'Add summary'}</p>` + `<div class="cv-section-title">Skills</div>` + skillsHTML + `<div class="cv-section-title">Experience</div>` + expHTML + `<div class="cv-section-title">Education</div>` + eduHTML;
   } else if(track === 'cabin'){
     layoutClass = 'layout-cabin';
     const photoHTML = photoData? `<img src="${photoData}" alt="">` : '';
     headerRow = `<div class="cv-header-row"><div class="cv-photo">${photoHTML}</div><div><h1 class="cv-name">${name}</h1><div class="cv-role">${role}</div><div class="cv-contact">${contactBits}</div></div></div>`;
-    bodyOrder = `<div class="cv-section-title">Summary</div><p class="cv-summary">${summary||'Add summary'}</p>` + `<div class="cv-section-title">Experience</div>` + expHTML + `<div class="cv-section-title">Education</div>` + eduHTML + `<div class="cv-section-title">Skills</div>` + skillsHTML;
+    bodyOrder = `<div class="cv-section-title">Summary</div><p>${summary||'Add summary'}</p>` + `<div class="cv-section-title">Experience</div>` + expHTML + `<div class="cv-section-title">Education</div>` + eduHTML + `<div class="cv-section-title">Skills</div>` + skillsHTML;
   } else {
     layoutClass = 'layout-bank';
     headerRow = `<h1 class="cv-name">${name}</h1><div class="cv-role">${role}</div><div class="cv-contact">${contactBits}</div>`;
-    bodyOrder = `<div class="cv-section-title">Education</div>` + eduHTML + `<div class="cv-section-title">Experience</div>` + expHTML + `<div class="cv-section-title">Summary</div><p class="cv-summary">${summary||'Add summary'}</p>` + `<div class="cv-section-title">Skills</div>` + skillsHTML;
+    bodyOrder = `<div class="cv-section-title">Education</div>` + eduHTML + `<div class="cv-section-title">Experience</div>` + expHTML + `<div class="cv-section-title">Summary</div><p>${summary||'Add summary'}</p>` + `<div class="cv-section-title">Skills</div>` + skillsHTML;
   }
   return {html: headerRow + bodyOrder, layoutClass};
 }
@@ -321,12 +175,9 @@ function render(){
   });
 }
 
-function downloadPDF(){
+function downloadPDF(){ // ADDED
   const element = document.getElementById('sheetFinal');
-  html2pdf().set({
-    margin: 0.3, filename: `JeromeCV-${document.getElementById('fullName').value || 'CV'}.pdf`,
-    html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-  }).from(element).save();
+  html2pdf().set({ margin: 0.3, filename: `JeromeCV-${document.getElementById('fullName').value || 'CV'}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } }).from(element).save();
 }
 renderRepeaters();
 </script>
