@@ -7,50 +7,64 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://js.stripe.com/v3/"></script>
 <style>
   :root{ --ink:#161b22; --paper:#f7f5f0; --paper-line:#ddd7c8; --slate:#31353c; --slate-soft:#6b7078; --brand:#33507a; --green:#2f8f7e; --gold:#B8860B; --radius:2px; --font-display:'Fraunces', serif; --font-body:'IBM Plex Sans', sans-serif; --font-mono:'IBM Plex Mono', monospace; }
-  *{box-sizing:border-box;} body{ font-family:var(--font-body); background:var(--ink); color:var(--slate); margin:0; }
+  *{box-sizing:border-box;} body{ font-family:var(--font-body); background:var(--ink); color:var(--slate); margin:0; -webkit-font-smoothing:antialiased; }
 .app{ max-width:1280px; margin:0 auto; background:var(--paper); min-height:100vh; }
-.topbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 40px; border-bottom:1px solid var(--paper-line); }
-.brand-mark.glyph{ font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--ink); }
+.topbar{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--paper-line); gap:10px; flex-wrap:wrap; }
+.brand-mark.glyph{ font-family:var(--font-display); font-weight:700; font-size:20px; color:var(--ink); }
 .brand-mark.glyph em{ color:var(--brand); }
-.profile-switcher{ display:flex; gap:8px; }
-.profile-btn{ font-family:var(--font-mono); font-size:10px; padding:6px 10px; border:1px solid var(--paper-line); background:#fff; cursor:pointer; }
+.profile-switcher{ display:flex; gap:6px; flex-wrap:wrap; }
+.profile-btn{ font-family:var(--font-mono); font-size:10px; padding:5px 8px; border:1px solid var(--paper-line); background:#fff; cursor:pointer; }
 .profile-btn.active{ background:var(--ink); color:var(--paper); }
-.hero{ padding:64px 40px 20px; }
-.hero h1{ font-family:var(--font-display); font-size:clamp(34px, 5vw, 56px); color:var(--ink); margin:0; }
-.hero.sub{ font-family:var(--font-display); font-style:italic; color:var(--slate-soft); margin:0 0 44px; }
-.tracks{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; padding:0 40px 56px; }
-.track-card{ background:#fff; border:1px solid var(--paper-line); padding:26px 24px; text-align:left; cursor:pointer; }
+.hero{ padding:40px 20px 10px; text-align:center; }
+.hero h1{ font-family:var(--font-display); font-size:clamp(28px, 8vw, 56px); color:var(--ink); margin:0; line-height:1.1; }
+.hero.sub{ font-family:var(--font-display); font-style:italic; color:var(--slate-soft); margin:10px 0 30px; font-size:16px; }
+.tracks{ display:grid; grid-template-columns:1fr; gap:14px; padding:0 20px 40px; }
+.track-card{ background:#fff; border:1px solid var(--paper-line); padding:20px; text-align:left; cursor:pointer; transition:all 0.2s; }
+.track-card:hover{ transform:translateY(-2px); }
 .track-card.selected{ border:2px solid var(--accent); }
-.track-card.swatch{ height:5px; width:38px; background:var(--accent); margin-bottom:16px; }
-.track-card.ticon{ font-family:var(--font-mono); font-size:11px; color:var(--accent); }
-.btn{ font-weight:600; padding:12px 22px; border:1px solid; cursor:pointer; font-family:var(--font-body); }
+.track-card.swatch{ height:4px; width:32px; background:var(--accent); margin-bottom:12px; }
+.track-card.ticon{ font-family:var(--font-mono); font-size:10px; color:var(--accent); }
+.btn{ font-weight:600; padding:14px 20px; border:1px solid; cursor:pointer; font-family:var(--font-body); font-size:15px; width:100%; }
 .btn-primary{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
-.btn-primary:disabled{ background:#ccc; cursor:not-allowed; }
 .btn-green{ background:var(--green); color:#fff; border-color:var(--green); }
-.paywall{ background:#fffbe6; border:1px dashed #d4a017; padding:20px; text-align:center; margin:20px 0; font-family:var(--font-display); }
-.workspace{ display:none; grid-template-columns:420px 1fr; }
-.workspace.active{display:grid;}
-.panel-form{ padding:36px; border-right:1px solid var(--paper-line); max-height:calc(100vh - 73px); overflow-y:auto; }
-.ats-bar{ background:#fff; border:1px solid var(--paper-line); padding:12px; margin-bottom:20px; }
-.ats-score{ font-size:24px; font-weight:700; font-family:var(--font-mono); }
-.ats-good{ color:var(--green); }.ats-bad{ color:#a94442; }
-.form-eyebrow{ font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; color:var(--accent); margin:30px 0 14px; }
-.field{margin-bottom:14px;}.field input,.field textarea{ width:100%; padding:10px 12px; border:1px solid var(--paper-line); font-family:var(--font-body); }
+
+/* MOBILE FIRST: STACK */
+.workspace{ display:block; }
+.panel-form{ padding:24px 20px; border-right:none; border-bottom:1px solid var(--paper-line); }
+.panel-preview{ background:#efece4; padding:20px; }
+.sheet{ background:#fff; padding:24px; min-height:500px; font-size:11px; line-height:1.5; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+
+/* DESKTOP: 2 COLUMNS */
+@media (min-width: 900px){
+ .tracks{ grid-template-columns:repeat(3, 1fr); padding:0 40px 56px; }
+ .hero{ padding:64px 40px 20px; text-align:left; }
+ .topbar{ padding:22px 40px; }
+ .btn{ width:auto; }
+ .workspace{ display:grid; grid-template-columns:420px 1fr; }
+ .panel-form{ padding:36px; border-right:1px solid var(--paper-line); border-bottom:none; max-height:calc(100vh - 73px); overflow-y:auto; }
+ .panel-preview{ padding:36px; overflow-y:auto; }
+ .sheet{ padding:40px; min-height:760px; font-size:10.5px; }
+}
+
+.ats-bar{ background:#fff; border:1px solid var(--paper-line); padding:14px; margin-bottom:20px; }
+.ats-score{ font-size:22px; font-weight:700; font-family:var(--font-mono); }
+.ats-good{ color:var(--green); }
+.form-eyebrow{ font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; color:var(--accent); margin:24px 0 10px; }
+.field{margin-bottom:14px;}.field label{font-size:12px; font-weight:500; display:block; margin-bottom:4px;}
+.field input,.field textarea{ width:100%; padding:12px; border:1px solid var(--paper-line); font-family:var(--font-body); font-size:15px; border-radius:2px; }
 .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
-.repeat-block{ border:1px solid var(--paper-line); padding:16px; margin-bottom:12px; position:relative; }
-.repeat-remove{ position:absolute; top:10px; right:10px; background:none; border:none; font-size:16px; cursor:pointer; }
-.add-row-btn{ width:100%; border:1px dashed var(--paper-line); padding:10px; font-weight:600; cursor:pointer; background:none; }
-.chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
-.chip{ background:var(--accent-tint); color:var(--accent); padding:5px 10px; border-radius:20px; display:flex; gap:6px; font-size:11px; }
-.panel-preview{ background:#efece4; padding:36px; overflow-y:auto; }
-.sheet{ background:#fff; padding:40px; min-height:760px; font-size:10.5px; line-height:1.4; }
-.sheet h1.cv-name{ font-family:var(--font-display); font-size:20px; margin:0 0 4px; }
-.sheet.cv-section-title{ font-weight:700; font-size:11px; text-transform:uppercase; border-bottom:1px solid #000; margin:18px 0 8px; padding-bottom:3px; font-family:var(--font-mono); }
-.modal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:999; align-items:center; justify-content:center; }
-.modal-content{ background:var(--paper); padding:30px; width:90%; max-width:600px; font-family:var(--font-body); }
+.repeat-block{ border:1px solid var(--paper-line); padding:16px; margin-bottom:12px; position:relative; background:#fff; }
+.repeat-remove{ position:absolute; top:10px; right:10px; background:none; border:none; font-size:18px; cursor:pointer; }
+.add-row-btn{ width:100%; border:1px dashed var(--paper-line); padding:12px; font-weight:600; cursor:pointer; background:#fff; }
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.chip{ background:var(--accent-tint); color:var(--accent); padding:6px 10px; border-radius:20px; display:flex; gap:6px; font-size:12px; align-items:center; }
+.chip button{ background:none; border:none; cursor:pointer; font-size:14px; }
+.sheet h1.cv-name{ font-family:var(--font-display); font-size:22px; margin:0 0 4px; }
+.sheet.cv-section-title{ font-weight:700; font-size:11px; text-transform:uppercase; border-bottom:1px solid #000; margin:16px 0 8px; padding-bottom:3px; font-family:var(--font-mono); }
+.modal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:999; align-items:center; justify-content:center; padding:20px; }
+.modal-content{ background:var(--paper); padding:24px; width:100%; max-width:600px; border-radius:4px; }
 </style>
 </head>
 <body>
@@ -68,17 +82,11 @@
       <button class="track-card" style="--accent:#a5761e; --accent-tint:#f6efdd;" onclick="selectTrack('cabin')"><div class="swatch"></div><div class="ticon">02 — Cabin Crew</div><h3>Airline & Hospitality</h3><p>Photo + Languages first.</p></button>
       <button class="track-card" style="--accent:#7a2e33; --accent-tint:#f4e6e7;" onclick="selectTrack('bank')"><div class="swatch"></div><div class="ticon">03 — Banking / Corporate</div><h3>Finance & Professional</h3><p>Formal and conservative.</p></button>
     </div>
-    <div style="text-align:right; padding:0 40px 60px;"><button class="btn btn-primary" id="continueBtn" disabled onclick="goToStep2()">Continue →</button></div>
+    <div style="text-align:right; padding:0 20px 60px;"><button class="btn btn-primary" id="continueBtn" disabled onclick="goToStep2()">Continue →</button></div>
   </div>
 
   <div class="workspace" id="workspace">
     <div class="panel-form">
-      <div class="paywall" id="paywall">
-        <div style="font-size:28px; color:var(--green);">$9</div>
-        <b>Unlock Pro Download</b>
-        <p style="font-size:12px;">Download PDF + Cover Letter for this CV</p>
-        <button class="btn btn-primary" onclick="checkout()">Pay with Card</button>
-      </div>
       <div class="ats-bar"><b>ATS Score:</b> <span class="ats-score" id="atsScore">0%</span></div>
 
       <div class="form-eyebrow">Basics</div>
@@ -89,18 +97,27 @@
       <div class="form-eyebrow">Summary</div><div class="field"><textarea id="summary" rows="3" oninput="saveData();render()"></textarea></div>
       <div class="form-eyebrow">Experience</div><div id="experienceList"></div><button class="add-row-btn" onclick="addExperience()">+ Add experience</button>
       <div class="form-eyebrow">Education</div><div id="educationList"></div><button class="add-row-btn" onclick="addEducation()">+ Add education</button>
-      <div class="form-eyebrow">Skills</div><div class="field"><input id="skillInput" placeholder="Press Enter" onkeydown="handleSkillEnter(event)"><div class="chips" id="skillChips"></div></div>
-      <div style="margin-top:34px;"><button class="btn" onclick="newProfile()">+ New CV</button><button class="btn btn-primary" id="downloadBtn" style="float:right; display:none;" onclick="downloadPDF()">Download PDF</button></div>
+      <div class="form-eyebrow">Skills</div><div class="field"><input id="skillInput" placeholder="Press Enter to add" onkeydown="handleSkillEnter(event)"><div class="chips" id="skillChips"></div></div>
+      <div style="margin-top:34px;"><button class="btn" onclick="newProfile()">+ New CV</button><button class="btn btn-primary" id="downloadBtn" style="float:right;" onclick="downloadPDF()">Download PDF Free</button></div>
     </div>
     <div class="panel-preview"><div class="sheet" id="sheetLive"></div></div>
   </div>
 
-  <div class="modal" id="coverLetterModal"><div class="modal-content"><h3 style="font-family:var(--font-display);">AI Cover Letter</h3><input id="companyName" placeholder="Company"><input id="jobTitle" placeholder="Job Title"><div id="generatedCL"></div><button class="btn btn-primary" onclick="generateCoverLetter()">Generate</button><button class="btn" id="downloadCLBtn" style="display:none;" onclick="downloadCLPDF()">Download</button><button class="btn" onclick="closeModal()">Close</button></div></div>
+  <!-- PRO COVER LETTER MODAL -->
+  <div class="modal" id="coverLetterModal"><div class="modal-content">
+    <h3 style="font-family:var(--font-display);">AI Cover Letter Generator</h3>
+    <div class="field"><label>Company Name</label><input id="companyName" placeholder="e.g. Emirates"></div>
+    <div class="field"><label>Job Title</label><input id="jobTitle" placeholder="e.g. Cabin Crew"></div>
+    <div class="field"><label>Paste Job Description - Optional</label><textarea id="jobDescription" placeholder="Paste the full job ad here..." rows="3"></textarea></div>
+    <div id="generatedCL" style="border:1px solid var(--paper-line); padding:15px; margin:15px 0; white-space:pre-line; max-height:300px; overflow:auto; background:#fff; font-size:12px; line-height:1.6;"></div>
+    <button class="btn btn-primary" onclick="generateCoverLetter()">Generate Pro Letter</button>
+    <button class="btn" onclick="downloadCLPDF()">Download CL PDF</button>
+    <button class="btn" onclick="closeModal()">Close</button>
+  </div></div>
 </div>
 
 <script>
-const stripe = Stripe('pk_test_REPLACE_WITH_YOUR_KEY'); // REPLACE
-let track = null; let currentProfile = 'default'; let isPaid = false;
+let track = null; let currentProfile = 'default';
 let profiles = JSON.parse(localStorage.getItem('jeromecv_profiles') || '{"default":{}}');
 let skills = []; let experiences = [{title:'', org:'', date:'', desc:''}]; let educations = [{title:'', org:'', date:''}]; let photoData = null;
 
@@ -108,32 +125,50 @@ function selectTrack(t){ track = t; document.querySelectorAll('.track-card').for
 function goToStep2(){ document.getElementById('step1').style.display = 'none'; document.getElementById('workspace').classList.add('active'); loadProfile(); }
 
 function newProfile(){ const name = prompt('Name this CV:'); if(!name) return; const id = name.toLowerCase().replace(/\s/g,'-'); profiles[id] = {track}; saveAllProfiles(); switchProfile(id); }
-function switchProfile(id){ currentProfile = id; isPaid = localStorage.getItem('paid_'+id) === 'true'; if(isPaid) unlockDownloads(); loadProfile(); renderSwitcher(); }
+function switchProfile(id){ currentProfile = id; loadProfile(); renderSwitcher(); }
 function renderSwitcher(){ profileSwitcher.innerHTML = Object.keys(profiles).map(id => `<button class="profile-btn ${id===currentProfile?'active':''}" onclick="switchProfile('${id}')">${id}</button>`).join(''); }
 function saveData(){ profiles[currentProfile] = {...profiles[currentProfile], name:fullName.value, role:roleTitle.value, email:email.value, phone:phone.value, summary:summary.value, skills, experiences, educations, photoData, track}; saveAllProfiles(); }
 function saveAllProfiles(){ localStorage.setItem('jeromecv_profiles', JSON.stringify(profiles)); }
 function loadProfile(){ const data = profiles[currentProfile] || {}; fullName.value=data.name||''; roleTitle.value=data.role||''; email.value=data.email||''; phone.value=data.phone||''; summary.value=data.summary||''; skills=data.skills||[]; experiences=data.experiences||[{}]; educations=data.educations||[{}]; photoData=data.photoData||null; track=data.track||track; renderRepeaters(); renderSkillChips(); render(); }
-
-function checkout(){ alert('Create Stripe Payment Link and redirect. After payment add?success=true to URL'); localStorage.setItem('paid_'+currentProfile, 'true'); unlockDownloads(); }
-function unlockDownloads(){ document.getElementById('paywall').style.display = 'none'; document.getElementById('downloadBtn').style.display = 'block'; }
 
 function addExperience(){ experiences.push({}); renderRepeaters(); }
 function removeExperience(i){ experiences.splice(i,1); renderRepeaters(); saveData(); render(); }
 function addEducation(){ educations.push({}); renderRepeaters(); }
 function removeEducation(i){ educations.splice(i,1); renderRepeaters(); saveData(); render(); }
 function renderRepeaters(){ experienceList.innerHTML = experiences.map((exp, i) => `<div class="repeat-block">${experiences.length > 1? `<button class="repeat-remove" onclick="removeExperience(${i})">×</button>` : ''}<div class="row2"><div class="field"><label>Role</label><input value="${exp.title||''}" oninput="experiences[${i}].title=this.value; saveData(); render()"></div><div class="field"><label>Company</label><input value="${exp.org||''}" oninput="experiences[${i}].org=this.value; saveData(); render()"></div></div><div class="field"><label>Dates</label><input value="${exp.date||''}" oninput="experiences[${i}].date=this.value; saveData(); render()"></div><div class="field"><label>Achievements</label><textarea oninput="experiences[${i}].desc=this.value; saveData(); render()">${exp.desc||''}</textarea></div></div>`).join(''); educationList.innerHTML = educations.map((edu, i) => `<div class="repeat-block">${educations.length > 1? `<button class="repeat-remove" onclick="removeEducation(${i})">×</button>` : ''}<div class="field"><label>Degree</label><input value="${edu.title||''}" oninput="educations[${i}].title=this.value; saveData(); render()"></div><div class="row2"><div class="field"><label>Institution</label><input value="${edu.org||''}" oninput="educations[${i}].org=this.value; saveData(); render()"></div><div class="field"><label>Year</label><input value="${edu.date||''}" oninput="educations[${i}].date=this.value; saveData(); render()"></div></div></div>`).join(''); }
-function handleSkillEnter(e){ if(e.key === 'Enter' && e.target.value.trim()){ skills.push(e.target.value.trim()); e.target.value = ''; renderSkillChips(); saveData(); render(); } }
+function handleSkillEnter(e){ if(e.key === 'Enter' && e.target.value.trim()){ skills.push(e.target.value.trim()); e.target.value = ''; renderSkillChips(); saveData(); render(); }
 function removeSkill(i){ skills.splice(i,1); renderSkillChips(); saveData(); render(); }
 function renderSkillChips(){ skillChips.innerHTML = skills.map((s,i) => `<span class="chip">${s}<button onclick="removeSkill(${i})">×</button></span>`).join(''); }
 function handlePhoto(e){ const file = e.target.files[0]; const reader = new FileReader(); reader.onload = function(ev){ photoData = ev.target.result; saveData(); render(); }; reader.readAsDataURL(file); }
-function calculateATS(){ let score = skills.length*4 + (summary.value.length/10); document.getElementById('atsScore').textContent = Math.min(100, score).toFixed(0) + '%'; }
-function buildSheetHTML(){ return `<h1 class="cv-name">${fullName.value}</h1><p>${roleTitle.value}</p><p>${summary.value}</p>`; }
-function render(){ calculateATS(); sheetLive.innerHTML = buildSheetHTML(); }
-function downloadPDF(){ if(!isPaid) return alert('Pay $9 first'); html2pdf().set({ margin: 0.6, filename: `CV.pdf`}).from(sheetLive).save(); }
-function generateCoverLetter(){ generatedCL.textContent = `Dear ${companyName.value}, I am applying for ${jobTitle.value}. ${summary.value}`; if(isPaid) downloadCLBtn.style.display='block'; }
-function downloadCLPDF(){ html2pdf().set({ margin: 0.6, filename: `CL.pdf`}).from(generatedCL).save(); }
+function calculateATS(){ let score = Math.min(100, skills.length*5 + (summary.value.length/20)); document.getElementById('atsScore').textContent = score.toFixed(0) + '%'; atsScore.className = 'ats-score ' + (score > 70? 'ats-good' : ''); }
+
+function generateCoverLetter(){ 
+  const name = fullName.value || 'Your Name';
+  const role = roleTitle.value || 'the role';
+  const company = companyName.value || '[Company]';
+  const job = jobTitle.value || '[Job Title]';
+  const exp1 = experiences[0] || {};
+  
+  const cl = `Dear Hiring Manager at ${company},
+
+I am writing to express my strong interest in the ${job} position at ${company}. As a ${role} with experience in ${skills.slice(0,3).join(', ')}, I am excited by the opportunity to contribute to your team.
+
+In my previous role as ${exp1.title || role} at ${exp1.org || 'my last company'}, I ${exp1.desc || 'delivered key results'}. ${summary.value}
+
+I would welcome the opportunity to discuss how my experience can contribute to ${company}'s success. Thank you for your consideration.
+
+Sincerely, 
+${name}
+${email.value} | ${phone.value}`;
+  document.getElementById('generatedCL').textContent = cl; 
+}
+
+function downloadCLPDF(){ html2pdf().set({ margin: 0.6, filename: `CoverLetter-${companyName.value}.pdf`}).from(document.getElementById('generatedCL')).save(); }
 function openModal(id){ document.getElementById(id+'Modal').style.display='flex'; }
 function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }
+function buildSheetHTML(){ return `<h1 class="cv-name">${fullName.value||'YOUR NAME'}</h1><p>${roleTitle.value}</p><p>${summary.value}</p>`; }
+function render(){ calculateATS(); sheetLive.innerHTML = buildSheetHTML(); }
+function downloadPDF(){ html2pdf().set({ margin: 0.6, filename: `CV-${fullName.value}.pdf`}).from(sheetLive).save(); }
 
 renderSwitcher();
 </script>
