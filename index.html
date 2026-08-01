@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JeromeCV — Build a CV that fits the job</title>
+<title>JeromeCV — Pro CV Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -12,25 +12,24 @@
   *{box-sizing:border-box;} body{ font-family:var(--font-body); background:var(--ink); color:var(--slate); margin:0; }
 .app{ max-width:1280px; margin:0 auto; background:var(--paper); min-height:100vh; }
 .topbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 40px; border-bottom:1px solid var(--paper-line); }
-.brand-mark{ display:flex; align-items:baseline; gap:10px; }
-.brand-mark.glyph{ font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--ink); } /* FIXED SPACE */
+.brand-mark.glyph{ font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--ink); }
 .brand-mark.glyph em{ color:var(--brand); }
-.brand-eyebrow{ font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; color:var(--slate-soft); border-left:1px solid var(--paper-line); padding-left:10px; }
-.hero{ padding:64px 40px 20px; }
-.hero h1{ font-family:var(--font-display); font-size:clamp(34px, 5vw, 56px); color:var(--ink); margin:0; }
-.hero.sub{ font-family:var(--font-display); font-style:italic; color:var(--slate-soft); margin:0 0 44px; } /* FIXED SPACE */
-.tracks{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; padding:0 40px 56px; }
-.track-card{ background:#fff; border:1px solid var(--paper-line); padding:26px 24px; text-align:left; cursor:pointer; }
+.hero{ padding:40px; }
+.tracks{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; padding:0 40px 40px; }
+.track-card{ background:#fff; border:1px solid var(--paper-line); padding:20px; cursor:pointer; }
 .track-card.selected{ border:2px solid var(--accent); }
-.track-card.swatch{ height:5px; width:38px; background:var(--accent); margin-bottom:16px; } /* FIXED SPACE */
-.track-card.ticon{ font-family:var(--font-mono); font-size:11px; color:var(--accent); } /* FIXED SPACE */
+.template-picker{ display:flex; gap:8px; margin-top:10px; }
+.template-btn{ font-size:10px; padding:4px 8px; border:1px solid #ccc; background:#fff; cursor:pointer; }
+.template-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
 .btn{ font-weight:600; padding:12px 22px; border:1px solid; cursor:pointer; }
 .btn-primary{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
 .btn-primary:disabled{ background:#ccc; cursor:not-allowed; }
 .workspace{ display:none; grid-template-columns:420px 1fr; }
 .workspace.active{display:grid;}
-.panel-form{ padding:36px; border-right:1px solid var(--paper-line); max-height:calc(100vh - 73px); overflow-y:auto; }
-.form-eyebrow{ font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; color:var(--accent); margin:30px 0 14px; }
+.panel-form{ padding:30px; border-right:1px solid var(--paper-line); max-height:calc(100vh - 73px); overflow-y:auto; }
+.ats-bar{ background:#fff; border:1px solid var(--paper-line); padding:12px; margin-bottom:20px; border-radius:4px; }
+.ats-score{ font-size:24px; font-weight:700; }
+.ats-good{ color:#2f8f7e; }.ats-bad{ color:#a94442; }
 .field{margin-bottom:14px;}.field input,.field textarea{ width:100%; padding:10px 12px; border:1px solid var(--paper-line); }
 .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
 .repeat-block{ border:1px solid var(--paper-line); padding:16px; margin-bottom:12px; position:relative; }
@@ -38,73 +37,103 @@
 .add-row-btn{ width:100%; border:1px dashed var(--paper-line); padding:10px; font-weight:600; cursor:pointer; }
 .chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
 .chip{ background:var(--accent-tint); color:var(--accent); padding:5px 10px; border-radius:20px; display:flex; gap:6px; }
-.chip button{ background:none; border:none; cursor:pointer; }
-.photo-circle{ width:64px; height:64px; border-radius:50%; background:#eee; border:1px solid var(--paper-line); overflow:hidden; }
-.photo-circle img{width:100%; height:100%; object-fit:cover;}
-.panel-preview{ background:#efece4; padding:36px; overflow-y:auto; }
+.panel-preview{ background:#efece4; padding:30px; overflow-y:auto; }
 .sheet{ background:#fff; padding:40px; min-height:760px; font-size:10.5px; line-height:1.4; }
 .sheet h1.cv-name{ font-size:20px; margin:0 0 4px; }
-.sheet.cv-role{ font-size:11px; text-transform:uppercase; margin-bottom:10px; }
-.sheet.cv-contact{ font-size:10px; margin-bottom:18px; }
 .sheet.cv-section-title{ font-weight:700; font-size:11px; text-transform:uppercase; border-bottom:1px solid #000; margin:18px 0 8px; padding-bottom:3px; }
-.sheet.layout-cabin.cv-header-row{ display:flex; gap:20px; }
-.sheet.layout-cabin.cv-photo{ width:90px; height:90px; border:2px solid var(--accent); overflow:hidden; }
 .review{ display:none; padding:44px 40px; }
 .review.active{display:flex; flex-direction:column; align-items:center;}
-  @media (max-width:900px){.tracks{grid-template-columns:1fr;}.workspace.active{grid-template-columns:1fr;} }
+.save-badge{ font-size:10px; color:#2f8f7e; margin-left:10px; }
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="topbar"><div class="brand-mark"><span class="glyph">Jerome<em>CV</em></span><span class="brand-eyebrow">Smart CV Builder</span></div><div id="stepIndicator"><b>01</b> Choose track</div></div>
-  <div id="step1"><div class="hero"><h1>Build a CV that fits the job.</h1><p class="sub">Not the other way around.</p></div>
+  <div class="topbar"><div class="brand-mark"><span class="glyph">Jerome<em>CV</em></span></div><div id="stepIndicator"><b>01</b> Choose track</div></div>
+
+  <div id="step1"><div class="hero"><h1>Build a CV that fits the job.</h1></div>
     <div class="tracks">
-      <button class="track-card" style="--accent:#2f8f7e; --accent-tint:#e6f2ef;" onclick="selectTrack('tech')"><div class="swatch"></div><div class="ticon">01 — Tech / CS</div><h3>Engineering & Product</h3><p>ATS friendly. No photo.</p></button>
-      <button class="track-card" style="--accent:#a5761e; --accent-tint:#f6efdd;" onclick="selectTrack('cabin')"><div class="swatch"></div><div class="ticon">02 — Cabin Crew</div><h3>Airline & Hospitality</h3><p>Photo + Languages first.</p></button>
-      <button class="track-card" style="--accent:#7a2e33; --accent-tint:#f4e6e7;" onclick="selectTrack('bank')"><div class="swatch"></div><div class="ticon">03 — Banking / Corporate</div><h3>Finance & Professional</h3><p>Formal and conservative.</p></button>
+      <div><button class="track-card" style="--accent:#2f8f7e; --accent-tint:#e6f2ef;" onclick="selectTrack('tech')"><h3>Tech / CS</h3><p>ATS friendly</p></button><div class="template-picker"><button class="template-btn active" onclick="selectTemplate('tech','modern')">Modern</button><button class="template-btn" onclick="selectTemplate('tech','classic')">Classic</button></div></div>
+      <div><button class="track-card" style="--accent:#a5761e; --accent-tint:#f6efdd;" onclick="selectTrack('cabin')"><h3>Cabin Crew</h3><p>Airline format</p></button><div class="template-picker"><button class="template-btn active" onclick="selectTemplate('cabin','emirates')">Emirates</button><button class="template-btn" onclick="selectTemplate('cabin','qatar')">Qatar</button></div></div>
+      <div><button class="track-card" style="--accent:#7a2e33; --accent-tint:#f4e6e7;" onclick="selectTrack('bank')"><h3>Banking / Corporate</h3><p>Formal</p></button><div class="template-picker"><button class="template-btn active" onclick="selectTemplate('bank','standard')">Standard</button><button class="template-btn" onclick="selectTemplate('bank','executive')">Executive</button></div></div>
     </div>
     <div style="text-align:right; padding:0 40px 60px;"><button class="btn btn-primary" id="continueBtn" disabled onclick="goToStep2()">Continue →</button></div>
   </div>
+
   <div class="workspace" id="workspace">
     <div class="panel-form">
-      <div class="form-eyebrow">Basics</div><div class="field"><label>Full name</label><input id="fullName" oninput="render()"></div><div class="field"><label>Target role</label><input id="roleTitle" oninput="render()"></div>
-      <div class="row2"><div class="field"><label>Email</label><input id="email" oninput="render()"></div><div class="field"><label>Phone</label><input id="phone" oninput="render()"></div></div>
-      <div class="row2"><div class="field"><label>Location</label><input id="location" oninput="render()"></div><div class="field"><label>LinkedIn</label><input id="linkedin" oninput="render()"></div></div>
-      <div class="field" id="photoField" style="display:none;"><label>Photo</label><div style="display:flex; gap:14px;"><div class="photo-circle" id="photoPreview">No photo</div><label class="btn">Upload<input type="file" accept="image/*" style="display:none" onchange="handlePhoto(event)"></label></div></div>
-      <div class="form-eyebrow">Summary</div><div class="field"><textarea id="summary" rows="3" oninput="render()"></textarea></div>
+      <div class="ats-bar"><b>ATS Score:</b> <span class="ats-score" id="atsScore">0%</span> <span id="atsTips"></span></div>
+
+      <div class="form-eyebrow">Basics</div><div class="field"><label>Full name</label><input id="fullName" oninput="saveData();render()"></div><div class="field"><label>Target role</label><input id="roleTitle" oninput="saveData();render()"></div>
+      <div class="row2"><div class="field"><label>Email</label><input id="email" oninput="saveData();render()"></div><div class="field"><label>Phone</label><input id="phone" oninput="saveData();render()"></div></div>
+      <div class="row2"><div class="field"><label>Location</label><input id="location" oninput="saveData();render()"></div><div class="field"><label>LinkedIn</label><input id="linkedin" oninput="saveData();render()"></div></div>
+      <div class="field" id="photoField" style="display:none;"><label>Photo</label><div style="display:flex; gap:14px;"><div class="photo-circle" id="photoPreview" style="width:64px; height:64px; border-radius:50%; background:#eee; overflow:hidden;">No photo</div><label class="btn">Upload<input type="file" accept="image/*" style="display:none" onchange="handlePhoto(event)"></label></div></div>
+      <div class="form-eyebrow">Summary</div><div class="field"><textarea id="summary" rows="3" oninput="saveData();render()"></textarea></div>
       <div class="form-eyebrow">Experience</div><div id="experienceList"></div><button class="add-row-btn" onclick="addExperience()">+ Add experience</button>
       <div class="form-eyebrow">Education</div><div id="educationList"></div><button class="add-row-btn" onclick="addEducation()">+ Add education</button>
       <div class="form-eyebrow">Skills</div><div class="field"><input id="skillInput" placeholder="Press Enter" onkeydown="handleSkillEnter(event)"><div class="chips" id="skillChips"></div></div>
-      <div style="margin-top:34px; display:flex; gap:10px;"><button class="btn" onclick="goToStep1()">← Back</button><button class="btn btn-primary" style="margin-left:auto" onclick="goToStep3()">Generate CV</button></div>
+      <div style="margin-top:34px; display:flex; gap:10px;"><button class="btn" onclick="goToStep1()">← Back</button><button class="btn btn-primary" style="margin-left:auto" onclick="goToStep3()">Generate CV <span class="save-badge" id="saveBadge"></span></button></div>
     </div>
     <div class="panel-preview"><div><div style="font-size:10px; margin-bottom:14px;">Live preview <b id="trackCaption">—</b></div><div class="sheet" id="sheetLive"></div></div></div>
   </div>
+
   <div class="review" id="review"><div style="display:flex; gap:10px; margin-bottom:28px;"><button class="btn" onclick="goToStep2()">← Edit info</button><button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button></div><div><div class="sheet" id="sheetFinal"></div></div></div>
 </div>
+
 <script>
-let track = null; let photoData = null; let skills = [];
+let track = null; let template = null; let photoData = null; let skills = [];
 let experiences = [{title:'', org:'', date:'', desc:''}];
 let educations = [{title:'', org:'', date:''}];
 const tint = {tech:'#e6f2ef', cabin:'#f6efdd', bank:'#f4e6e7'};
-const accent = {tech:'#000', cabin:'#B8860B', bank:'#1a1a'};
+const accent = {tech:'#000', cabin:'#B8860B', bank:'#1a1a1a'}; // FIXED bank
 const trackLabel = {tech:'Tech / CS', cabin:'Cabin Crew', bank:'Banking / Corporate'};
 
-function selectTrack(t){ track = t; document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('selected')); document.querySelector(`.track-card[onclick*="${t}"]`).classList.add('selected'); document.getElementById('continueBtn').disabled = false; document.getElementById('photoField').style.display = (t === 'cabin')? 'block' : 'none'; }
-function goToStep2(){ document.getElementById('step1').style.display = 'none'; document.getElementById('workspace').classList.add('active'); document.getElementById('stepIndicator').innerHTML = `<b>02</b> Tell us about you · ${trackLabel[track]}`; document.getElementById('trackCaption').textContent = trackLabel[track]; renderRepeaters(); render(); }
+function selectTrack(t){ track = t; template = template || 'modern'; document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('selected')); document.querySelector(`.track-card[onclick*="${t}"]`).classList.add('selected'); document.getElementById('continueBtn').disabled = false; document.getElementById('photoField').style.display = (t === 'cabin')? 'block' : 'none'; loadData(); }
+function selectTemplate(t, temp){ template = temp; document.querySelectorAll(`.track-card[onclick*="${t}"] +.template-picker.template-btn`).forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); }
+function goToStep2(){ document.getElementById('step1').style.display = 'none'; document.getElementById('workspace').classList.add('active'); document.getElementById('stepIndicator').innerHTML = `<b>02</b> Tell us about you · ${trackLabel[track]}`; document.getElementById('trackCaption').textContent = trackLabel[track] + ' - ' + template; renderRepeaters(); render(); }
 function goToStep1(){ document.getElementById('step1').style.display = 'block'; document.getElementById('workspace').classList.remove('active'); document.getElementById('review').classList.remove('active'); }
 function goToStep3(){ document.getElementById('workspace').classList.remove('active'); document.getElementById('review').classList.add('active'); render(); }
-function handlePhoto(e){ const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(ev){ photoData = ev.target.result; document.getElementById('photoPreview').innerHTML = `<img src="${photoData}">`; render(); }; reader.readAsDataURL(file); }
-function addExperience(){ experiences.push({title:'', org:'', date:'', desc:''}); renderRepeaters(); }
-function removeExperience(i){ experiences.splice(i,1); renderRepeaters(); render(); }
-function addEducation(){ educations.push({title:'', org:'', date:''}); renderRepeaters(); }
-function removeEducation(i){ educations.splice(i,1); renderRepeaters(); render(); }
-function renderRepeaters(){
-  document.getElementById('experienceList').innerHTML = experiences.map((exp, i) => `<div class="repeat-block">${experiences.length > 1? `<button class="repeat-remove" onclick="removeExperience(${i})">×</button>` : ''}<div class="row2"><div class="field"><label>Role</label><input value="${exp.title}" oninput="experiences[${i}].title=this.value; render()"></div><div class="field"><label>Company</label><input value="${exp.org}" oninput="experiences[${i}].org=this.value; render()"></div></div><div class="field"><label>Dates</label><input value="${exp.date}" oninput="experiences[${i}].date=this.value; render()"></div><div class="field"><label>Achievements</label><textarea oninput="experiences[${i}].desc=this.value; render()" placeholder="• Increased sales 32%">${exp.desc}</textarea></div></div>`).join('');
-  document.getElementById('educationList').innerHTML = educations.map((edu, i) => `<div class="repeat-block">${educations.length > 1? `<button class="repeat-remove" onclick="removeEducation(${i})">×</button>` : ''}<div class="field"><label>Degree</label><input value="${edu.title}" oninput="educations[${i}].title=this.value; render()"></div><div class="row2"><div class="field"><label>Institution</label><input value="${edu.org}" oninput="educations[${i}].org=this.value; render()"></div><div class="field"><label>Year</label><input value="${edu.date}" oninput="educations[${i}].date=this.value; render()"></div></div></div>`).join('');
+
+function saveData(){ // 1. AUTO-SAVE
+  const data = {name:fullName.value, role:roleTitle.value, email:email.value, phone:phone.value, location:location.value, linkedin:linkedin.value, summary:summary.value, skills, experiences, educations, track, template, photoData};
+  localStorage.setItem('jeromecv_data', JSON.stringify(data));
+  document.getElementById('saveBadge').textContent = 'Saved ✓';
+  setTimeout(()=>document.getElementById('saveBadge').textContent='', 1000);
 }
-function handleSkillEnter(e){ if(e.key === 'Enter' && e.target.value.trim()){ skills.push(e.target.value.trim()); e.target.value = ''; renderSkillChips(); render(); } }
-function removeSkill(i){ skills.splice(i,1); renderSkillChips(); render(); }
+function loadData(){ // 2. LOAD ON START
+  const data = JSON.parse(localStorage.getItem('jeromecv_data') || '{}');
+  if(data.track === track){
+    fullName.value=data.name||''; roleTitle.value=data.role||''; email.value=data.email||''; phone.value=data.phone||''; location.value=data.location||''; linkedin.value=data.linkedin||''; summary.value=data.summary||'';
+    skills=data.skills||[]; experiences=data.experiences||experiences; educations=data.educations||educations; photoData=data.photoData||null;
+    if(photoData) photoPreview.innerHTML = `<img src="${photoData}" style="width:100%; height:100%; object-fit:cover;">`;
+    renderSkillChips(); renderRepeaters();
+  }
+}
+
+function handlePhoto(e){ const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(ev){ photoData = ev.target.result; document.getElementById('photoPreview').innerHTML = `<img src="${photoData}">`; saveData(); render(); }; reader.readAsDataURL(file); }
+function addExperience(){ experiences.push({title:'', org:'', date:'', desc:''}); renderRepeaters(); }
+function removeExperience(i){ experiences.splice(i,1); renderRepeaters(); saveData(); render(); }
+function addEducation(){ educations.push({title:'', org:'', date:''}); renderRepeaters(); }
+function removeEducation(i){ educations.splice(i,1); renderRepeaters(); saveData(); render(); }
+function renderRepeaters(){
+  document.getElementById('experienceList').innerHTML = experiences.map((exp, i) => `<div class="repeat-block">${experiences.length > 1? `<button class="repeat-remove" onclick="removeExperience(${i})">×</button>` : ''}<div class="row2"><div class="field"><label>Role</label><input value="${exp.title}" oninput="experiences[${i}].title=this.value; saveData(); render()"></div><div class="field"><label>Company</label><input value="${exp.org}" oninput="experiences[${i}].org=this.value; saveData(); render()"></div></div><div class="field"><label>Dates</label><input value="${exp.date}" oninput="experiences[${i}].date=this.value; saveData(); render()"></div><div class="field"><label>Achievements</label><textarea oninput="experiences[${i}].desc=this.value; saveData(); render()" placeholder="• Increased sales 32%">${exp.desc}</textarea></div></div>`).join('');
+  document.getElementById('educationList').innerHTML = educations.map((edu, i) => `<div class="repeat-block">${educations.length > 1? `<button class="repeat-remove" onclick="removeEducation(${i})">×</button>` : ''}<div class="field"><label>Degree</label><input value="${edu.title}" oninput="educations[${i}].title=this.value; saveData(); render()"></div><div class="row2"><div class="field"><label>Institution</label><input value="${edu.org}" oninput="educations[${i}].org=this.value; saveData(); render()"></div><div class="field"><label>Year</label><input value="${edu.date}" oninput="educations[${i}].date=this.value; saveData(); render()"></div></div></div>`).join('');
+}
+function handleSkillEnter(e){ if(e.key === 'Enter' && e.target.value.trim()){ skills.push(e.target.value.trim()); e.target.value = ''; renderSkillChips(); saveData(); render(); } }
+function removeSkill(i){ skills.splice(i,1); renderSkillChips(); saveData(); render(); }
 function renderSkillChips(){ document.getElementById('skillChips').innerHTML = skills.map((s,i) => `<span class="chip">${s}<button onclick="removeSkill(${i})">×</button></span>`).join(''); }
+
+function calculateATS(){ // 3. ATS CHECKER
+  let score = 0; let tips = [];
+  if(fullName.value) score+=10; else tips.push('Add name');
+  if(roleTitle.value) score+=10; else tips.push('Add target role');
+  if(summary.value.length > 100) score+=15; else tips.push('Summary too short');
+  if(skills.length > 5) score+=20; else tips.push('Add 5+ skills');
+  if(experiences.filter(e=>e.desc.includes('•')).length > 0) score+=25; else tips.push('Use bullet points •');
+  if(email.value && phone.value) score+=20; else tips.push('Add contact info');
+  document.getElementById('atsScore').textContent = score + '%';
+  document.getElementById('atsScore').className = 'ats-score ' + (score > 70? 'ats-good' : 'ats-bad');
+  document.getElementById('atsTips').textContent = tips.join(' · ');
+}
 
 function buildSheetHTML(){
   const name = document.getElementById('fullName').value || 'YOUR NAME';
@@ -112,42 +141,48 @@ function buildSheetHTML(){
   const email = document.getElementById('email').value; const phone = document.getElementById('phone').value;
   const location = document.getElementById('location').value; const linkedin = document.getElementById('linkedin').value;
   const summary = document.getElementById('summary').value;
-  const contactBits = [email, phone, location, linkedin].filter(Boolean).join(' | '); // FIXED TYPO
-  const skillsHTML = skills.length? `<div>${skills.map(s=>`• ${s}`).join(' • ')}</div>` : ``;
+  const contactBits = [email, phone, location, linkedin].filter(Boolean).join(' | ');
+  const skillsHTML = skills.length? `<div style="display:flex; flex-wrap:wrap; gap:4px;">${skills.map(s=>`<span>• ${s}</span>`).join('')}</div>` : ``; // FIXED WRAP
   const expHTML = experiences.filter(e=>e.title||e.org).map(e => `<div style="margin-bottom:10px;"><div style="display:flex; justify-content:space-between;"><b>${e.title||'Role'}</b><span>${e.date}</span></div><div style="font-style:italic;">${e.org||''}</div><div style="white-space:pre-line;">${e.desc}</div></div>`).join('');
   const eduHTML = educations.filter(e=>e.title||e.org).map(e => `<div style="margin-bottom:8px;"><div style="display:flex; justify-content:space-between;"><b>${e.title}</b><span>${e.date}</span></div><div>${e.org}</div></div>`).join('');
 
-  let headerRow = ''; let bodyOrder = ''; let layoutClass = ''; let font = 'Arial, sans-serif';
-  if(track === 'tech'){
-    layoutClass = 'layout-tech'; font = "'IBM Plex Mono', monospace";
-    headerRow = `<div style="text-align:center; border-bottom:2px solid #000;"><h1 class="cv-name">${name.toUpperCase()}</h1><div class="cv-role">${role.toUpperCase()}</div><div class="cv-contact">${contactBits}</div></div>`;
-    bodyOrder = `<div class="cv-section-title">SUMMARY</div><p>${summary}</p>` + `<div class="cv-section-title">TECHNICAL SKILLS</div>` + skillsHTML + `<div class="cv-section-title">EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">EDUCATION</div>` + eduHTML;
-  } else if(track === 'cabin'){
-    layoutClass = 'layout-cabin'; font = "'Fraunces', serif";
+  let headerRow = ''; let bodyOrder = ''; let font = 'Arial, sans-serif';
+
+  // TEMPLATE VARIANTS
+  if(track === 'tech' && template === 'classic'){
+    font = "'Times New Roman', serif";
+    headerRow = `<h1 class="cv-name">${name}</h1><div>${role}</div><div>${contactBits}</div>`;
+    bodyOrder = `<div class="cv-section-title">Experience</div>` + expHTML + `<div class="cv-section-title">Education</div>` + eduHTML;
+  } else if(track === 'cabin' && template === 'qatar'){
+    font = "'IBM Plex Sans', sans-serif";
     const photoHTML = photoData? `<img src="${photoData}">` : '';
-    headerRow = `<div class="cv-header-row"><div class="cv-photo">${photoHTML}</div><div><h1 class="cv-name">${name}</h1><div class="cv-role">${role}</div><div class="cv-contact">${contactBits}</div></div></div>`;
-    bodyOrder = `<div class="cv-section-title">PROFILE</div><p>${summary}</p>` + `<div class="cv-section-title">LANGUAGES</div><p>English - Fluent • French - Conversational</p>` + `<div class="cv-section-title">EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">EDUCATION</div>` + eduHTML + `<div class="cv-section-title">SKILLS</div>` + skillsHTML;
-  } else {
-    layoutClass = 'layout-bank'; font = "'Times New Roman', serif";
-    headerRow = `<div style="text-align:center;"><h1 class="cv-name">${name}</h1><div class="cv-role">${role}</div><div class="cv-contact">${contactBits}</div></div>`;
-    bodyOrder = `<div class="cv-section-title">EDUCATION</div>` + eduHTML + `<div class="cv-section-title">EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">SUMMARY</div><p>${summary}</p>` + `<div class="cv-section-title">SKILLS</div>` + `<p>${skills.join(' • ')}</p>`;
+    headerRow = `<div style="display:flex;"><div style="width:90px; height:90px; border:2px solid var(--accent);">${photoHTML}</div><div style="margin-left:20px;"><h1 class="cv-name">${name}</h1><div>${role}</div><div>${contactBits}</div></div></div>`;
+    bodyOrder = `<div class="cv-section-title">SKILLS</div>` + skillsHTML + `<div class="cv-section-title">EXPERIENCE</div>` + expHTML;
+  } else if(track === 'bank' && template === 'executive'){
+    font = "'Fraunces', serif";
+    headerRow = `<div style="border-bottom:3px double #000; text-align:center;"><h1 class="cv-name">${name}</h1><div>${role}</div><div>${contactBits}</div></div>`;
+    bodyOrder = `<div class="cv-section-title">EXECUTIVE SUMMARY</div><p>${summary}</p>` + `<div class="cv-section-title">EDUCATION</div>` + eduHTML + `<div class="cv-section-title">EXPERIENCE</div>` + expHTML;
+  } else { // DEFAULTS
+    if(track === 'tech'){ font = "'IBM Plex Mono', monospace"; headerRow = `<div style="text-align:center; border-bottom:2px solid #000;"><h1 class="cv-name">${name.toUpperCase()}</h1><div>${role.toUpperCase()}</div><div>${contactBits}</div></div>`; bodyOrder = `<div class="cv-section-title">SUMMARY</div><p>${summary}</p>` + `<div class="cv-section-title">SKILLS</div>` + skillsHTML + `<div class="cv-section-title">EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">EDUCATION</div>` + eduHTML; }
+    if(track === 'cabin'){ font = "'Fraunces', serif"; const photoHTML = photoData? `<img src="${photoData}">` : ''; headerRow = `<div style="display:flex;"><div style="width:90px; height:90px; border:2px solid var(--accent);">${photoHTML}</div><div style="margin-left:20px;"><h1 class="cv-name">${name}</h1><div>${role}</div><div>${contactBits}</div></div></div>`; bodyOrder = `<div class="cv-section-title">PROFILE</div><p>${summary}</p>` + `<div class="cv-section-title">LANGUAGES</div><p>English - Fluent</p>` + `<div class="cv-section-title">EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">EDUCATION</div>` + eduHTML + `<div class="cv-section-title">SKILLS</div>` + skillsHTML; }
+    if(track === 'bank'){ font = "'Times New Roman', serif"; headerRow = `<div style="text-align:center;"><h1 class="cv-name">${name}</h1><div>${role}</div><div>${contactBits}</div></div>`; bodyOrder = `<div class="cv-section-title">EDUCATION</div>` + eduHTML + `<div class="cv-section-title">EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">SUMMARY</div><p>${summary}</p>` + `<div class="cv-section-title">SKILLS</div>` + `<p>${skills.join(' • ')}</p>`; }
   }
-  return {html: `<div style="font-family:${font};">` + headerRow + bodyOrder + `</div>`, layoutClass};
+  return {html: `<div style="font-family:${font};">` + headerRow + bodyOrder + `</div>`};
 }
 
 function render(){
   if(!track) return;
-  const {html, layoutClass} = buildSheetHTML();
+  calculateATS(); // RUN ATS ON EVERY RENDER
+  const {html} = buildSheetHTML();
   ['sheetLive','sheetFinal'].forEach(id=>{
     const el = document.getElementById(id); if(!el) return;
-    el.className = 'sheet ' + layoutClass;
     el.innerHTML = html;
   });
 }
 
 function downloadPDF(){
   const element = document.getElementById('sheetFinal');
-  html2pdf().set({ margin: 0.5, filename: `CV-${document.getElementById('fullName').value || 'Jerome'}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } }).from(element).save();
+  html2pdf().set({ margin: 0.6, filename: `CV-${document.getElementById('fullName').value || 'Jerome'}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } }).from(element).save(); // FIXED MARGIN
 }
 renderRepeaters();
 </script>
