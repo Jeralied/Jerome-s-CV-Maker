@@ -8,176 +8,146 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-  :root{
-    --ink:#161b22; --paper:#f7f5f0; --paper-dim:#efece4; --paper-line:#ddd7c8;
-    --slate:#31353c; --slate-soft:#6b7078; --slate-faint:#9a9d9e;
-    --brand:#33507a; --brand-dark:#20344f; --brand-tint:#e7edf4;
-    --tech:#2f8f7e; --tech-tint:#e6f2ef; --cabin:#a5761e; --cabin-tint:#f6efdd;
-    --bank:#7a2e33; --bank-tint:#f4e6e7; --radius:2px;
-    --font-display:'Fraunces', serif; --font-body:'IBM Plex Sans', sans-serif; --font-mono:'IBM Plex Mono', monospace;
-  }
-  *{box-sizing:border-box;}
-  body{ font-family:var(--font-body); background:var(--ink); color:var(--slate); margin:0; -webkit-font-smoothing:antialiased; }
- .app{ max-width:1280px; margin:0 auto; background:var(--paper); min-height:100vh; box-shadow:0 0 80px rgba(0,0,0,0.35); }
- .topbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 40px; border-bottom:1px solid var(--paper-line); }
- .brand-mark{ display:flex; align-items:baseline; gap:10px; }
- .brand-mark.glyph{ font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--ink); letter-spacing:-0.02em; } /* FIXED SPACE */
- .brand-mark.glyph em{ font-style:normal; color:var(--brand); }
- .brand-eyebrow{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--slate-soft); border-left:1px solid var(--paper-line); padding-left:10px; }
- .step-indicator{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; color:var(--slate-soft); }
- .hero{ padding:64px 40px 20px; }
- .hero-eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--brand); margin-bottom:18px; }
- .hero h1{ font-family:var(--font-display); font-weight:600; font-size:clamp(34px, 5vw, 56px); line-height:1.05; color:var(--ink); margin:0 0 6px; }
- .hero.sub{ font-family:var(--font-display); font-style:italic; font-weight:500; font-size:clamp(18px, 2.4vw, 24px); color:var(--slate-soft); margin:0 0 44px; } /* FIXED SPACE */
- .tracks{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; padding:0 40px 56px; }
- .track-card{ background:#fff; border:1px solid var(--paper-line); padding:26px 24px 22px; text-align:left; transition:transform 0.18s ease, box-shadow 0.18s ease; cursor:pointer; } /* FIXED */
- .track-card:hover{ transform:translateY(-3px); box-shadow:0 14px 30px -18px rgba(22,27,34,0.35); }
- .track-card.selected{ border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset; }
- .track-card.swatch{ height:5px; width:38px; background:var(--accent); margin-bottom:16px; } /* FIXED SPACE */
- .track-card.ticon{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; display:block; } /* FIXED SPACE */
- .track-card h3{ font-family:var(--font-display); font-size:21px; font-weight:600; color:var(--ink); margin:0 0 8px; }
- .hero-actions{ display:flex; justify-content:flex-end; padding:0 40px 60px; }
- .btn{ font-family:var(--font-body); font-weight:600; font-size:13.5px; padding:12px 22px; border:1px solid transparent; display:inline-flex; gap:8px; transition:transform 0.12s ease; cursor:pointer;} /* FIXED */
- .btn-primary{ background:var(--ink); color:var(--paper); }
- .btn-primary:disabled{ background:var(--paper-dim); color:var(--slate-faint); cursor:not-allowed; }
- .btn-ghost{ background:transparent; color:var(--slate); border-color:var(--paper-line); }
- .btn-outline{ background:#fff; color:var(--ink); border-color:var(--ink); }
- .workspace{ display:none; grid-template-columns:420px 1fr; }
- .workspace.active{display:grid;}
- .panel-form{ padding:36px; border-right:1px solid var(--paper-line); max-height:calc(100vh - 73px); overflow-y:auto; }
- .form-eyebrow{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin:30px 0 14px; display:flex; align-items:center; gap:10px; }
- .field{margin-bottom:14px;}.field label{ display:block; font-size:11.5px; font-weight:600; color:var(--slate-soft); margin-bottom:5px; }
- .field input,.field textarea{ width:100%; font-family:var(--font-body); font-size:14px; padding:10px 12px; border:1px solid var(--paper-line); background:#fff; }
- .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
- .repeat-block{ border:1px solid var(--paper-line); padding:16px; margin-bottom:12px; background:#fdfcfa; position:relative; }
- .repeat-remove{ position:absolute; top:10px; right:10px; background:none; border:none; font-size:16px; cursor:pointer; }
- .add-row-btn{ width:100%; background:transparent; border:1px dashed var(--paper-line); padding:10px; font-weight:600; cursor:pointer; }
- .chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
- .chip{ background:var(--accent-tint); color:var(--accent); font-size:12px; font-weight:600; padding:5px 10px; border-radius:20px; display:flex; align-items:center; gap:6px; }
- .chip button{ background:none; border:none; cursor:pointer; }
- .photo-circle{ width:64px; height:64px; border-radius:50%; background:var(--paper-dim); border:1px solid var(--paper-line); overflow:hidden; }
- .photo-circle img{width:100%; height:100%; object-fit:cover;}
- .panel-preview{ background:var(--paper-dim); padding:36px; overflow-y:auto; }
- .sheet{ background:#fff; box-shadow:0 20px 45px -20px rgba(22,27,34,0.3); padding:46px 42px; min-height:760px; }
- .sheet h1.cv-name{ font-family:var(--font-display); font-size:30px; font-weight:600; margin:0 0 4px; }
- .sheet.cv-role{ font-family:var(--font-mono); font-size:12px; color:var(--accent); text-transform:uppercase; margin-bottom:14px; }
- .sheet.cv-contact{ font-size:12px; color:var(--slate-soft); display:flex; flex-wrap:wrap; gap:4px 14px; margin-bottom:22px; }
- .sheet.cv-section-title{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin:22px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--paper-line); }
- .sheet.cv-skill-row{display:flex; flex-wrap:wrap; gap:8px;}
- .sheet.cv-skill{ font-size:11.5px; font-weight:600; padding:4px 10px; background:var(--accent-tint); color:var(--accent); }
- .sheet.placeholder-text{color:var(--slate-faint); font-style:italic;}
- .sheet.layout-tech{font-family:var(--font-mono);}
- .sheet.layout-cabin.cv-header-row{ display:flex; gap:20px; }
- .sheet.layout-cabin.cv-photo{ width:90px; height:90px; border-radius:8px; border:3px solid var(--accent); overflow:hidden; }
- .sheet.layout-bank.cv-name{ text-align:center; text-transform:uppercase; }
- .sheet.layout-bank.cv-contact{justify-content:center; border-bottom:2px solid var(--ink); padding-bottom:16px;}
- .review{ display:none; padding:44px 40px; justify-content:center; }
- .review.active{display:flex; flex-direction:column; align-items:center;}
+  :root{ --ink:#161b22; --paper:#f7f5f0; --paper-line:#ddd7c8; --slate:#31353c; --slate-soft:#6b7078; --brand:#33507a; --radius:2px; --font-display:'Fraunces', serif; --font-body:'IBM Plex Sans', sans-serif; --font-mono:'IBM Plex Mono', monospace; }
+  *{box-sizing:border-box;} body{ font-family:var(--font-body); background:var(--ink); color:var(--slate); margin:0; }
+.app{ max-width:1280px; margin:0 auto; background:var(--paper); min-height:100vh; }
+.topbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 40px; border-bottom:1px solid var(--paper-line); }
+.brand-mark{ display:flex; align-items:baseline; gap:10px; }
+.brand-mark.glyph{ font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--ink); } /* FIXED SPACE */
+.brand-mark.glyph em{ color:var(--brand); }
+.brand-eyebrow{ font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; color:var(--slate-soft); border-left:1px solid var(--paper-line); padding-left:10px; }
+.hero{ padding:64px 40px 20px; }
+.hero h1{ font-family:var(--font-display); font-size:clamp(34px, 5vw, 56px); color:var(--ink); margin:0; }
+.hero.sub{ font-family:var(--font-display); font-style:italic; color:var(--slate-soft); margin:0 0 44px; } /* FIXED SPACE */
+.tracks{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; padding:0 40px 56px; }
+.track-card{ background:#fff; border:1px solid var(--paper-line); padding:26px 24px; text-align:left; cursor:pointer; }
+.track-card.selected{ border:2px solid var(--accent); }
+.track-card.swatch{ height:5px; width:38px; background:var(--accent); margin-bottom:16px; } /* FIXED SPACE */
+.track-card.ticon{ font-family:var(--font-mono); font-size:11px; color:var(--accent); } /* FIXED SPACE */
+.btn{ font-weight:600; padding:12px 22px; border:1px solid; cursor:pointer; }
+.btn-primary{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.btn-primary:disabled{ background:#ccc; cursor:not-allowed; }
+.workspace{ display:none; grid-template-columns:420px 1fr; }
+.workspace.active{display:grid;}
+.panel-form{ padding:36px; border-right:1px solid var(--paper-line); max-height:calc(100vh - 73px); overflow-y:auto; }
+.form-eyebrow{ font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; color:var(--accent); margin:30px 0 14px; }
+.field{margin-bottom:14px;}.field input,.field textarea{ width:100%; padding:10px 12px; border:1px solid var(--paper-line); }
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.repeat-block{ border:1px solid var(--paper-line); padding:16px; margin-bottom:12px; position:relative; }
+.repeat-remove{ position:absolute; top:10px; right:10px; background:none; border:none; font-size:16px; cursor:pointer; }
+.add-row-btn{ width:100%; border:1px dashed var(--paper-line); padding:10px; font-weight:600; cursor:pointer; }
+.chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.chip{ background:var(--accent-tint); color:var(--accent); padding:5px 10px; border-radius:20px; display:flex; gap:6px; }
+.chip button{ background:none; border:none; cursor:pointer; }
+.photo-circle{ width:64px; height:64px; border-radius:50%; background:#eee; border:1px solid var(--paper-line); overflow:hidden; }
+.photo-circle img{width:100%; height:100%; object-fit:cover;}
+.panel-preview{ background:#efece4; padding:36px; overflow-y:auto; }
+.sheet{ background:#fff; padding:40px; min-height:760px; font-size:10.5px; line-height:1.4; }
+.sheet h1.cv-name{ font-size:20px; margin:0 0 4px; }
+.sheet.cv-role{ font-size:11px; text-transform:uppercase; margin-bottom:10px; }
+.sheet.cv-contact{ font-size:10px; margin-bottom:18px; }
+.sheet.cv-section-title{ font-weight:700; font-size:11px; text-transform:uppercase; border-bottom:1px solid #000; margin:18px 0 8px; padding-bottom:3px; }
+.sheet.layout-cabin.cv-header-row{ display:flex; gap:20px; }
+.sheet.layout-cabin.cv-photo{ width:90px; height:90px; border:2px solid var(--accent); overflow:hidden; }
+.review{ display:none; padding:44px 40px; }
+.review.active{display:flex; flex-direction:column; align-items:center;}
   @media (max-width:900px){.tracks{grid-template-columns:1fr;}.workspace.active{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="topbar">
-    <div class="brand-mark"><span class="glyph">Jerome<em>CV</em></span><span class="brand-eyebrow">Smart CV Builder</span></div>
-    <div class="step-indicator" id="stepIndicator"><b>01</b> Choose track</div>
-  </div>
-  <div id="step1">
-    <div class="hero"><div class="hero-eyebrow">Three tracks, one profile</div><h1>Build a CV that fits the job.</h1><p class="sub">Not the other way around.</p></div>
+  <div class="topbar"><div class="brand-mark"><span class="glyph">Jerome<em>CV</em></span><span class="brand-eyebrow">Smart CV Builder</span></div><div id="stepIndicator"><b>01</b> Choose track</div></div>
+  <div id="step1"><div class="hero"><h1>Build a CV that fits the job.</h1><p class="sub">Not the other way around.</p></div>
     <div class="tracks">
-      <button class="track-card" data-track="tech" style="--accent:#2f8f7e; --accent-tint:#e6f2ef;" onclick="selectTrack('tech')"><span class="swatch"></span><span class="ticon">01 — Tech / CS</span><h3>Engineering &amp; Product</h3><p>ATS friendly. No photo.</p></button>
-      <button class="track-card" data-track="cabin" style="--accent:#a5761e; --accent-tint:#f6efdd;" onclick="selectTrack('cabin')"><span class="swatch"></span><span class="ticon">02 — Cabin Crew</span><h3>Airline &amp; Hospitality</h3><p>Photo + Languages first.</p></button>
-      <button class="track-card" data-track="bank" style="--accent:#7a2e33; --accent-tint:#f4e6e7;" onclick="selectTrack('bank')"><span class="swatch"></span><span class="ticon">03 — Banking / Corporate</span><h3>Finance &amp; Professional</h3><p>Formal and conservative.</p></button>
+      <button class="track-card" style="--accent:#2f8f7e; --accent-tint:#e6f2ef;" onclick="selectTrack('tech')"><div class="swatch"></div><div class="ticon">01 — Tech / CS</div><h3>Engineering & Product</h3><p>ATS friendly. No photo.</p></button>
+      <button class="track-card" style="--accent:#a5761e; --accent-tint:#f6efdd;" onclick="selectTrack('cabin')"><div class="swatch"></div><div class="ticon">02 — Cabin Crew</div><h3>Airline & Hospitality</h3><p>Photo + Languages first.</p></button>
+      <button class="track-card" style="--accent:#7a2e33; --accent-tint:#f4e6e7;" onclick="selectTrack('bank')"><div class="swatch"></div><div class="ticon">03 — Banking / Corporate</div><h3>Finance & Professional</h3><p>Formal and conservative.</p></button>
     </div>
-    <div class="hero-actions"><button class="btn btn-primary" id="continueBtn" disabled onclick="goToStep2()">Continue →</button></div>
+    <div style="text-align:right; padding:0 40px 60px;"><button class="btn btn-primary" id="continueBtn" disabled onclick="goToStep2()">Continue →</button></div>
   </div>
   <div class="workspace" id="workspace">
     <div class="panel-form">
-      <div class="form-eyebrow">Basics</div>
-      <div class="field"><label>Full name</label><input id="fullName" oninput="render()"></div>
-      <div class="field"><label>Target role</label><input id="roleTitle" oninput="render()"></div>
+      <div class="form-eyebrow">Basics</div><div class="field"><label>Full name</label><input id="fullName" oninput="render()"></div><div class="field"><label>Target role</label><input id="roleTitle" oninput="render()"></div>
       <div class="row2"><div class="field"><label>Email</label><input id="email" oninput="render()"></div><div class="field"><label>Phone</label><input id="phone" oninput="render()"></div></div>
       <div class="row2"><div class="field"><label>Location</label><input id="location" oninput="render()"></div><div class="field"><label>LinkedIn</label><input id="linkedin" oninput="render()"></div></div>
-      <div class="field" id="photoField" style="display:none;"><label>Photo</label><div style="display:flex; gap:14px;"><div class="photo-circle" id="photoPreview">No photo</div><label class="btn btn-ghost">Upload<input type="file" accept="image/*" style="display:none" onchange="handlePhoto(event)"></label></div></div>
+      <div class="field" id="photoField" style="display:none;"><label>Photo</label><div style="display:flex; gap:14px;"><div class="photo-circle" id="photoPreview">No photo</div><label class="btn">Upload<input type="file" accept="image/*" style="display:none" onchange="handlePhoto(event)"></label></div></div>
       <div class="form-eyebrow">Summary</div><div class="field"><textarea id="summary" rows="3" oninput="render()"></textarea></div>
       <div class="form-eyebrow">Experience</div><div id="experienceList"></div><button class="add-row-btn" onclick="addExperience()">+ Add experience</button>
       <div class="form-eyebrow">Education</div><div id="educationList"></div><button class="add-row-btn" onclick="addEducation()">+ Add education</button>
       <div class="form-eyebrow">Skills</div><div class="field"><input id="skillInput" placeholder="Press Enter" onkeydown="handleSkillEnter(event)"><div class="chips" id="skillChips"></div></div>
-      <div class="form-footer" style="margin-top:34px; display:flex; gap:10px;"><button class="btn btn-ghost" onclick="goToStep1()">← Back</button><button class="btn btn-primary" style="margin-left:auto" onclick="goToStep3()">Generate CV</button></div>
+      <div style="margin-top:34px; display:flex; gap:10px;"><button class="btn" onclick="goToStep1()">← Back</button><button class="btn btn-primary" style="margin-left:auto" onclick="goToStep3()">Generate CV</button></div>
     </div>
-    <div class="panel-preview"><div><div class="preview-caption" style="font-family:var(--font-mono); font-size:10px; margin-bottom:14px;">Live preview <b id="trackCaption">—</b></div><div class="sheet" id="sheetLive"></div></div></div>
+    <div class="panel-preview"><div><div style="font-size:10px; margin-bottom:14px;">Live preview <b id="trackCaption">—</b></div><div class="sheet" id="sheetLive"></div></div></div>
   </div>
-  <div class="review" id="review"><div style="display:flex; gap:10px; margin-bottom:28px;"><button class="btn btn-ghost" onclick="goToStep2()">← Edit info</button><button class="btn btn-outline" onclick="downloadPDF()">Download PDF</button></div><div><div class="sheet" id="sheetFinal"></div></div></div>
+  <div class="review" id="review"><div style="display:flex; gap:10px; margin-bottom:28px;"><button class="btn" onclick="goToStep2()">← Edit info</button><button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button></div><div><div class="sheet" id="sheetFinal"></div></div></div>
 </div>
 <script>
 let track = null; let photoData = null; let skills = [];
 let experiences = [{title:'', org:'', date:'', desc:''}];
 let educations = [{title:'', org:'', date:''}];
 const tint = {tech:'#e6f2ef', cabin:'#f6efdd', bank:'#f4e6e7'};
-const accent = {tech:'#2f8f7e', cabin:'#a5761e', bank:'#7a2e33'};
+const accent = {tech:'#000', cabin:'#B8860B', bank:'#1a1a'};
 const trackLabel = {tech:'Tech / CS', cabin:'Cabin Crew', bank:'Banking / Corporate'};
 
-function selectTrack(t){ track = t; document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('selected')); document.querySelector(`.track-card[data-track="${t}"]`).classList.add('selected'); document.getElementById('continueBtn').disabled = false; document.getElementById('photoField').style.display = (t === 'cabin')? 'block' : 'none'; }
+function selectTrack(t){ track = t; document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('selected')); document.querySelector(`.track-card[onclick*="${t}"]`).classList.add('selected'); document.getElementById('continueBtn').disabled = false; document.getElementById('photoField').style.display = (t === 'cabin')? 'block' : 'none'; }
 function goToStep2(){ document.getElementById('step1').style.display = 'none'; document.getElementById('workspace').classList.add('active'); document.getElementById('stepIndicator').innerHTML = `<b>02</b> Tell us about you · ${trackLabel[track]}`; document.getElementById('trackCaption').textContent = trackLabel[track]; renderRepeaters(); render(); }
 function goToStep1(){ document.getElementById('step1').style.display = 'block'; document.getElementById('workspace').classList.remove('active'); document.getElementById('review').classList.remove('active'); }
 function goToStep3(){ document.getElementById('workspace').classList.remove('active'); document.getElementById('review').classList.add('active'); render(); }
-function handlePhoto(e){ const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(ev){ photoData = ev.target.result; document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="">`; render(); }; reader.readAsDataURL(file); }
+function handlePhoto(e){ const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(ev){ photoData = ev.target.result; document.getElementById('photoPreview').innerHTML = `<img src="${photoData}">`; render(); }; reader.readAsDataURL(file); }
 function addExperience(){ experiences.push({title:'', org:'', date:'', desc:''}); renderRepeaters(); }
 function removeExperience(i){ experiences.splice(i,1); renderRepeaters(); render(); }
 function addEducation(){ educations.push({title:'', org:'', date:''}); renderRepeaters(); }
 function removeEducation(i){ educations.splice(i,1); renderRepeaters(); render(); }
 function renderRepeaters(){
-  document.getElementById('experienceList').innerHTML = experiences.map((exp, i) => `<div class="repeat-block">${experiences.length > 1? `<button class="repeat-remove" onclick="removeExperience(${i})">×</button>` : ''}<div class="row2"><div class="field"><label>Role</label><input value="${exp.title}" oninput="experiences[${i}].title=this.value; render()"></div><div class="field"><label>Company</label><input value="${exp.org}" oninput="experiences[${i}].org=this.value; render()"></div></div><div class="field"><label>Dates</label><input value="${exp.date}" oninput="experiences[${i}].date=this.value; render()"></div><div class="field"><label>What you did</label><textarea oninput="experiences[${i}].desc=this.value; render()">${exp.desc}</textarea></div></div>`).join('');
-  document.getElementById('educationList').innerHTML = educations.map((edu, i) => `<div class="repeat-block">${educations.length > 1? `<button class="repeat-remove" onclick="removeEducation(${i})">×</button>` : ''}<div class="field"><label>Qualification</label><input value="${edu.title}" oninput="educations[${i}].title=this.value; render()"></div><div class="row2"><div class="field"><label>Institution</label><input value="${edu.org}" oninput="educations[${i}].org=this.value; render()"></div><div class="field"><label>Year</label><input value="${edu.date}" oninput="educations[${i}].date=this.value; render()"></div></div></div>`).join('');
+  document.getElementById('experienceList').innerHTML = experiences.map((exp, i) => `<div class="repeat-block">${experiences.length > 1? `<button class="repeat-remove" onclick="removeExperience(${i})">×</button>` : ''}<div class="row2"><div class="field"><label>Role</label><input value="${exp.title}" oninput="experiences[${i}].title=this.value; render()"></div><div class="field"><label>Company</label><input value="${exp.org}" oninput="experiences[${i}].org=this.value; render()"></div></div><div class="field"><label>Dates</label><input value="${exp.date}" oninput="experiences[${i}].date=this.value; render()"></div><div class="field"><label>Achievements</label><textarea oninput="experiences[${i}].desc=this.value; render()" placeholder="• Increased sales 32%">${exp.desc}</textarea></div></div>`).join('');
+  document.getElementById('educationList').innerHTML = educations.map((edu, i) => `<div class="repeat-block">${educations.length > 1? `<button class="repeat-remove" onclick="removeEducation(${i})">×</button>` : ''}<div class="field"><label>Degree</label><input value="${edu.title}" oninput="educations[${i}].title=this.value; render()"></div><div class="row2"><div class="field"><label>Institution</label><input value="${edu.org}" oninput="educations[${i}].org=this.value; render()"></div><div class="field"><label>Year</label><input value="${edu.date}" oninput="educations[${i}].date=this.value; render()"></div></div></div>`).join('');
 }
 function handleSkillEnter(e){ if(e.key === 'Enter' && e.target.value.trim()){ skills.push(e.target.value.trim()); e.target.value = ''; renderSkillChips(); render(); } }
 function removeSkill(i){ skills.splice(i,1); renderSkillChips(); render(); }
 function renderSkillChips(){ document.getElementById('skillChips').innerHTML = skills.map((s,i) => `<span class="chip">${s}<button onclick="removeSkill(${i})">×</button></span>`).join(''); }
 
 function buildSheetHTML(){
-  const name = document.getElementById('fullName').value || 'Your Name';
-  const role = document.getElementById('roleTitle').value || 'Target Role';
+  const name = document.getElementById('fullName').value || 'YOUR NAME';
+  const role = document.getElementById('roleTitle').value || 'TARGET ROLE';
   const email = document.getElementById('email').value; const phone = document.getElementById('phone').value;
   const location = document.getElementById('location').value; const linkedin = document.getElementById('linkedin').value;
   const summary = document.getElementById('summary').value;
-  const contactBits = [email, phone, location, linkedin].filter(Boolean).join(' · ');
-  const skillsHTML = skills.length? `<div class="cv-skill-row">${skills.map(s=>`<span class="cv-skill">${s}</span>`).join('')}</div>` : `<p class="placeholder-text">Add skills</p>`;
-  const expHTML = experiences.filter(e=>e.title||e.org).length? experiences.map(e => `<div style="margin-bottom:12px;"><b>${e.title||'Role'}</b> · ${e.org||''}<div style="font-size:11px; color:#666;">${e.date}</div><p style="font-size:13px;">${e.desc}</p></div>`).join('') : `<p class="placeholder-text">Add experience</p>`;
-  const eduHTML = educations.filter(e=>e.title||e.org).length? educations.map(e => `<div style="margin-bottom:12px;"><b>${e.title}</b><div>${e.org}</div><div style="font-size:11px;">${e.date}</div></div>`).join('') : `<p class="placeholder-text">Add education</p>`;
+  const contactBits = [email, phone, location, linkedin].filter(Boolean).join(' | '); // FIXED TYPO
+  const skillsHTML = skills.length? `<div>${skills.map(s=>`• ${s}`).join(' • ')}</div>` : ``;
+  const expHTML = experiences.filter(e=>e.title||e.org).map(e => `<div style="margin-bottom:10px;"><div style="display:flex; justify-content:space-between;"><b>${e.title||'Role'}</b><span>${e.date}</span></div><div style="font-style:italic;">${e.org||''}</div><div style="white-space:pre-line;">${e.desc}</div></div>`).join('');
+  const eduHTML = educations.filter(e=>e.title||e.org).map(e => `<div style="margin-bottom:8px;"><div style="display:flex; justify-content:space-between;"><b>${e.title}</b><span>${e.date}</span></div><div>${e.org}</div></div>`).join('');
 
-  let headerRow = ''; let bodyOrder = ''; let layoutClass = '';
+  let headerRow = ''; let bodyOrder = ''; let layoutClass = ''; let font = 'Arial, sans-serif';
   if(track === 'tech'){
-    layoutClass = 'layout-tech';
-    headerRow = `<h1 class="cv-name">${name}</h1><div class="cv-role">${role}</div><div class="cv-contact">${contactBits}</div>`;
-    bodyOrder = `<div class="cv-section-title">Summary</div><p>${summary||'Add summary'}</p>` + `<div class="cv-section-title">Skills</div>` + skillsHTML + `<div class="cv-section-title">Experience</div>` + expHTML + `<div class="cv-section-title">Education</div>` + eduHTML;
+    layoutClass = 'layout-tech'; font = "'IBM Plex Mono', monospace";
+    headerRow = `<div style="text-align:center; border-bottom:2px solid #000;"><h1 class="cv-name">${name.toUpperCase()}</h1><div class="cv-role">${role.toUpperCase()}</div><div class="cv-contact">${contactBits}</div></div>`;
+    bodyOrder = `<div class="cv-section-title">SUMMARY</div><p>${summary}</p>` + `<div class="cv-section-title">TECHNICAL SKILLS</div>` + skillsHTML + `<div class="cv-section-title">EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">EDUCATION</div>` + eduHTML;
   } else if(track === 'cabin'){
-    layoutClass = 'layout-cabin';
-    const photoHTML = photoData? `<img src="${photoData}" alt="">` : '';
+    layoutClass = 'layout-cabin'; font = "'Fraunces', serif";
+    const photoHTML = photoData? `<img src="${photoData}">` : '';
     headerRow = `<div class="cv-header-row"><div class="cv-photo">${photoHTML}</div><div><h1 class="cv-name">${name}</h1><div class="cv-role">${role}</div><div class="cv-contact">${contactBits}</div></div></div>`;
-    bodyOrder = `<div class="cv-section-title">Summary</div><p>${summary||'Add summary'}</p>` + `<div class="cv-section-title">Experience</div>` + expHTML + `<div class="cv-section-title">Education</div>` + eduHTML + `<div class="cv-section-title">Skills</div>` + skillsHTML;
+    bodyOrder = `<div class="cv-section-title">PROFILE</div><p>${summary}</p>` + `<div class="cv-section-title">LANGUAGES</div><p>English - Fluent • French - Conversational</p>` + `<div class="cv-section-title">EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">EDUCATION</div>` + eduHTML + `<div class="cv-section-title">SKILLS</div>` + skillsHTML;
   } else {
-    layoutClass = 'layout-bank';
-    headerRow = `<h1 class="cv-name">${name}</h1><div class="cv-role">${role}</div><div class="cv-contact">${contactBits}</div>`;
-    bodyOrder = `<div class="cv-section-title">Education</div>` + eduHTML + `<div class="cv-section-title">Experience</div>` + expHTML + `<div class="cv-section-title">Summary</div><p>${summary||'Add summary'}</p>` + `<div class="cv-section-title">Skills</div>` + skillsHTML;
+    layoutClass = 'layout-bank'; font = "'Times New Roman', serif";
+    headerRow = `<div style="text-align:center;"><h1 class="cv-name">${name}</h1><div class="cv-role">${role}</div><div class="cv-contact">${contactBits}</div></div>`;
+    bodyOrder = `<div class="cv-section-title">EDUCATION</div>` + eduHTML + `<div class="cv-section-title">EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">SUMMARY</div><p>${summary}</p>` + `<div class="cv-section-title">SKILLS</div>` + `<p>${skills.join(' • ')}</p>`;
   }
-  return {html: headerRow + bodyOrder, layoutClass};
+  return {html: `<div style="font-family:${font};">` + headerRow + bodyOrder + `</div>`, layoutClass};
 }
 
 function render(){
   if(!track) return;
   const {html, layoutClass} = buildSheetHTML();
-  const acc = accent[track]; const tin = tint[track];
   ['sheetLive','sheetFinal'].forEach(id=>{
     const el = document.getElementById(id); if(!el) return;
     el.className = 'sheet ' + layoutClass;
-    el.style.setProperty('--accent', acc); el.style.setProperty('--accent-tint', tin);
     el.innerHTML = html;
   });
 }
 
-function downloadPDF(){ // ADDED
+function downloadPDF(){
   const element = document.getElementById('sheetFinal');
-  html2pdf().set({ margin: 0.3, filename: `JeromeCV-${document.getElementById('fullName').value || 'CV'}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } }).from(element).save();
+  html2pdf().set({ margin: 0.5, filename: `CV-${document.getElementById('fullName').value || 'Jerome'}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } }).from(element).save();
 }
 renderRepeaters();
 </script>
