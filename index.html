@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JeromeCV - Smart CV Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <!-- STEP 1: CHOOSE TEMPLATE -->
+    <section id="step1" class="screen active">
+      <h1>JeromeCV</h1>
+      <p class="subtitle">Build a CV that fits the job. Not the other way around.</p>
+      <div class="template-grid">
+        <button class="template-card" data-type="tech">
+          <h3>💻 Tech / CS</h3>
+          <p>No photo. Skills + Projects first. ATS Friendly</p>
+        </button>
+        <button class="template-card" data-type="cabin">
+          <h3>✈️ Cabin Crew</h3>
+          <p>Photo top-left. Languages + Personality first</p>
+        </button>
+        <button class="template-card" data-type="banking">
+          <h3>🏦 Banking / Corporate</h3>
+          <p>Professional. Education + Experience first</p>
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 2: FILL FORM -->
+    <section id="step2" class="screen">
+      <h2>Tell us about you</h2>
+      <form id="cvForm">
+        <input type="text" id="fullName" placeholder="Full Name" required>
+        <input type="text" id="jobTitle" placeholder="Job Title e.g. Frontend Developer">
+        <input type="email" id="email" placeholder="Email">
+        <input type="tel" id="phone" placeholder="Phone">
+        <textarea id="summary" placeholder="Professional Summary - 2 lines"></textarea>
+        <textarea id="skills" placeholder="Skills - Separate with commas"></textarea>
+        <textarea id="experience" placeholder="Work Experience"></textarea>
+        <textarea id="education" placeholder="Education"></textarea>
+
+        <div id="photoUpload" class="hidden">
+          <label>Upload Photo for Cabin Crew</label>
+          <input type="file" id="photo" accept="image/*">
+          <img id="photoPreview" class="hidden">
+        </div>
+
+        <button type="submit" class="btn-primary">Generate CV</button>
+        <button type="button" id="backBtn" class="btn-ghost">Back</button>
+      </form>
+    </section>
+
+    <!-- STEP 3: PREVIEW + DOWNLOAD -->
+    <section id="step3" class="screen">
+      <div id="cvPreview" class="cv-preview"></div>
+      <button id="downloadPDF" class="btn-primary">Download PDF</button>
+      <button id="editBtn" class="btn-ghost">Edit Info</button>
+    </section>
+  </div>
+  <script src="templates.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
