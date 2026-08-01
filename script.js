@@ -1,32 +1,210 @@
-:root {
-  --bg: #0a0a0f;
-  --card: #111827;
-  --text: #f3f4f6;
-  --muted: #9ca3af;
-  --accent: #6366f1;
-  --accent-2: #8b5cf6;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; padding: 2rem 1rem; }
-header { text-align: center; margin-bottom: 3rem; }
-header h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--accent); }
-.screen { display: none; max-width: 900px; margin: 0 auto; }
-.screen.active { display: block; }
-h2 { margin-bottom: 1.5rem; text-align: center; }
-.template-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
-.template-card { background: var(--card); border: 2px solid #1f2937; padding: 2rem; border-radius: 16px; cursor: pointer; transition: 0.3s; text-align: left; }
-.template-card:hover { border-color: var(--accent); transform: translateY(-4px); }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-input, textarea { width: 100%; padding: 12px; background: #1f2937; border: 1px solid #374151; color: white; border-radius: 8px; font-family: 'Inter'; margin: 8px 0; }
-.btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; }
-.btn-primary { background: linear-gradient(90deg, var(--accent), var(--accent-2)); color: white; padding: 14px 28px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; flex: 1; }
-.btn-ghost { background: transparent; border: 1px solid #374151; color: var(--muted); padding: 14px 28px; border-radius: 10px; cursor: pointer; }
-#photoPreview { width: 100px; height: 100px; border-radius: 8px; object-fit: cover; margin-top: 10px; }
-.hidden { display: none; }
+let currentIndex = 0;
+const answers = {};
+let lastTypeCode = '';
 
-/* CV PREVIEW STYLES */
-.cv-preview { background: white; color: #111; padding: 0; margin: 2rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-.cv { padding: 2.5rem; font-size: 10.5pt; }
-.cv h1 { font-size: 24pt; margin-bottom: 4px; }
-.cv h2 { font-size: 12pt; color: #555; font-weight: 500; margin-bottom: 12px; }
-.cv h3 { font-size: 11pt; font-weight: 700; border-bottom: 2px solid #eee; padding-bottom: 4px; margin: 16px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+const typeNames = {
+    "ISTJ": "The Logistician", "ISFJ": "The Defender", "INFJ": "The Advocate", "INTJ": "The Architect",
+    "ISTP": "The Virtuoso", "ISFP": "The Adventurer", "INFP": "The Mediator", "INTP": "The Thinker",
+    "ESTP": "The Entrepreneur", "ESFP": "The Entertainer", "ENFP": "The Campaigner", "ENTP": "The Debater",
+    "ESTJ": "The Executive", "ESFJ": "The Consul", "ENFJ": "The Protagonist", "ENTJ": "The Commander"
+};
+
+const quizScreen = document.getElementById('quiz');
+const resultScreen = document.getElementById('result');
+
+const startBtn = document.getElementById('startBtn');
+const backBtn = document.getElementById('backBtn');
+const retakeBtn = document.getElementById('retakeBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+
+const qCounter = document.getElementById('qCounter');
+const qText = document.getElementById('qText');
+const scaleButtons = document.getElementById('scaleButtons');
+const progressFill = document.getElementById('progressFill');
+
+const SCALE_VALUES = [-3, -2, -1, 0, 1, 2, 3];
+
+function showScreen(el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIndex];
+  qCounter.textContent = `Question ${currentIndex + 1} of ${QUESTIONS.length}`;
+  qText.textContent = q.text;
+  progressFill.style.width = `${(currentIndex / QUESTIONS.length) * 100}%`;
+  backBtn.disabled = currentIndex === 0;
+
+  scaleButtons.innerHTML = '';
+  SCALE_VALUES.forEach(val => {
+    const btn = document.createElement('button');
+    btn.className = 'scale-btn';
+    btn.dataset.value = val;
+    btn.setAttribute('aria-label', `Rate ${val}`);
+    if (answers[q.id] === val) btn.classList.add('selected');
+    btn.addEventListener('click', () => selectAnswer(q.id, val));
+    scaleButtons.appendChild(btn);
+  });
+}
+
+function selectAnswer(qid, val) {
+  answers[qid] = val;
+  renderQuestion();
+  setTimeout(() => {
+    if (currentIndex < QUESTIONS.length - 1) {
+      currentIndex++;
+      renderQuestion();
+    } else {
+      showResults();
+    }
+  }, 200);
+}
+
+backBtn.addEventListener('click', () => {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderQuestion();
+  }
+});
+
+startBtn.addEventListener('click', () => {
+  currentIndex = 0;
+  showScreen(quizScreen);
+  renderQuestion();
+});
+
+retakeBtn.addEventListener('click', () => {
+  currentIndex = 0;
+  for (const k in answers) delete answers[k];
+  showScreen(quizScreen);
+  renderQuestion();
+});
+
+function sigmoid(x) {
+  return 1 / (1 + Math.exp(-x));
+}
+
+function scoreAxis(axisKey) {
+  const model = MODEL_WEIGHTS[axisKey];
+  let z = model.intercept;
+  model.question_ids.forEach((qid, i) => {
+    const val = answers[qid] ?? 0;
+    z += model.coefficients[i] * val;
+  });
+  const prob = sigmoid(z);
+  return { prob, letter: prob >= 0.5 ? model.positive_letter : model.negative_letter };
+}
+
+function showResults() {
+  const axes = ['EI', 'SN', 'TF', 'JP'];
+  let typeCode = '';
+  const axisResults = [];
+
+  axes.forEach(axis => {
+    const { prob, letter } = scoreAxis(axis);
+    typeCode += letter;
+    const model = MODEL_WEIGHTS[axis];
+    axisResults.push({
+      letter,
+      prob,
+      positive_letter: model.positive_letter,
+      negative_letter: model.negative_letter
+    });
+  });
+
+  lastTypeCode = typeCode;
+
+  const displayName = typeNames[typeCode] || (TYPE_INFO[typeCode] && TYPE_INFO[typeCode].name) || '';
+  const desc = (TYPE_INFO[typeCode] && TYPE_INFO[typeCode].desc) || '';
+
+  document.getElementById('typeCode').textContent = typeCode;
+  document.getElementById('typeName').textContent = displayName;
+  document.getElementById('typeDesc').textContent = desc;
+
+  const axisBarsEl = document.getElementById('axisBars');
+  axisBarsEl.innerHTML = '';
+  axisResults.forEach(r => {
+    const pct = Math.round(r.prob * 100);
+    const fillPct = r.letter === r.positive_letter ? pct : 100 - pct;
+    const row = document.createElement('div');
+    row.className = 'axis-row';
+    row.innerHTML = `
+      <span class="axis-letter-left">${r.negative_letter} ${r.letter === r.negative_letter ? fillPct + '%' : ''}</span>
+      <div class="axis-track">
+        <div class="axis-fill" style="width:${fillPct}%; ${r.letter === r.positive_letter ? '' : 'margin-left:auto;'}"></div>
+      </div>
+      <span class="axis-letter-right">${r.positive_letter} ${r.letter === r.positive_letter ? fillPct + '%' : ''}</span>
+    `;
+    axisBarsEl.appendChild(row);
+  });
+
+  showScreen(resultScreen);
+  setupShare(typeCode, displayName);
+}
+
+const SITE_URL = window.location.href.split('?')[0].split('#')[0];
+
+function buildShareText(typeCode, typeName) {
+  return `I got ${typeCode} - ${typeName} on Jerome's Mindprint Quiz! Try it yourself:`;
+}
+
+function setupShare(typeCode, typeName) {
+  const shareBtn = document.getElementById('shareBtn');
+  const shareFallback = document.getElementById('shareFallback');
+  const shareWhatsapp = document.getElementById('shareWhatsapp');
+  const shareTwitter = document.getElementById('shareTwitter');
+  const shareCopy = document.getElementById('shareCopy');
+  const copyConfirm = document.getElementById('copyConfirm');
+
+  const text = buildShareText(typeCode, typeName);
+  const fullMessage = `${text} ${SITE_URL}`;
+
+  shareWhatsapp.href = `https://wa.me/?text=${encodeURIComponent(fullMessage)}`;
+  shareTwitter.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullMessage)}`;
+
+  shareBtn.onclick = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Jerome's Mindprint Quiz", text, url: SITE_URL });
+        return;
+      } catch (err) {}
+    }
+    shareFallback.classList.toggle('visible');
+  };
+
+  shareCopy.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(fullMessage);
+      copyConfirm.textContent = 'Copied to clipboard';
+      setTimeout(() => { copyConfirm.textContent = ''; }, 2000);
+    } catch (err) {
+      copyConfirm.textContent = 'Could not copy — select and copy manually';
+    }
+  };
+}
+
+downloadBtn.addEventListener('click', () => {
+  const card = document.getElementById('resultCard');
+  const watermark = card.querySelector('.card-watermark');
+
+  downloadBtn.disabled = true;
+  downloadBtn.textContent = 'Preparing...';
+  if (watermark) watermark.classList.add('visible');
+
+  html2canvas(card, { backgroundColor: '#201827', scale: 2 })
+    .then(canvas => {
+      const link = document.createElement('a');
+      link.download = `Jerome-Mindprint-${lastTypeCode}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    })
+    .catch(() => {
+      alert('Could not generate the image. Try again.');
+    })
+    .finally(() => {
+      if (watermark) watermark.classList.remove('visible');
+      downloadBtn.disabled = false;
+      downloadBtn.textContent = 'Download Result';
+    });
+});
