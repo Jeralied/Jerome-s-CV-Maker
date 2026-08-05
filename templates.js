@@ -22,13 +22,12 @@ const TEMPLATES = {
     </div>`;
   },
 
-  cabin: (d) => {
+ cabin: (d) => {
     const photoHTML = d.photo
       ? `<img src="${d.photo}" class="passport-photo" alt="">`
       : `<div class="passport-photo photo-placeholder">Photo</div>`;
 
     const contact = [d.email,d.phone,d.location].filter(Boolean).join(" • ");
-
     const personal = [
       d.age ? `Age: ${d.age}` : "",
       d.nationality ? `Nationality: ${d.nationality}` : "",
@@ -40,23 +39,22 @@ const TEMPLATES = {
     const skills = (d.skills || "").split("|").map(s=>s.trim()).filter(Boolean).map(s=>`<li>${s}</li>`).join("");
 
     return `
-    <div class="cv cv-cabin">
-      <div class="header-cabin">
+    <div class="cv cv-cabin-emirates">
+      <div class="header-cabin-emirates">
         <div class="header-left">
           <h1>${d.name || "YOUR NAME"}</h1>
           <h2>${d.title || "CABIN CREW"}</h2>
           ${contact ? `<div class="contact-line">${contact}</div>` : ""}
-          ${personal ? `<div class="contact-line">${personal}</div>` : ""}
-          ${d.languages ? `<div class="contact-line">Languages: ${d.languages}</div>` : ""}
         </div>
         <div class="header-right">${photoHTML}</div>
       </div>
-      ${d.summary ? `<div class="section"><h3>Professional Profile</h3><p>${d.summary}</p></div>` : ""}
-      ${skills ? `<div class="section"><h3>Core Competencies</h3><ul class="plain-skills">${skills}</ul></div>` : ""}
-      ${d.experience ? `<div class="section"><h3>Customer Service Experience</h3><div class="exp-block">${d.experience}</div></div>` : ""}
-      ${d.education ? `<div class="section"><h3>Education</h3><div class="exp-block">${d.education}</div></div>` : ""}
-      ${d.cabinTraining ? `<div class="section"><h3>Training & Certifications</h3><p>${d.cabinTraining}</p></div>` : ""}
-    </div>`;
+
+      <div class="personal-line">${personal}</div>
+      ${d.languages ? `<div class="personal-line">Languages: ${d.languages}</div>` : ""}
+
+      ${d.summary ? `<div class="section"><h3>PROFESSIONAL PROFILE</h3><p><strong>PROFILE:</strong> ${d.summary}</p></div>` : ""}
+      ${skills ? `<div class="section"><h3>CORE COMPETENCIES</h3><ul class="plain-skills">${skills}</ul></div>` : ""}
+      ${d.experience ? `<div class="section"><h3>CUSTOMER SERVICE EXPERIENCE</h3><div class="exp-block">${d.experience}</div></
   },
 
   corporate: (d) => {
