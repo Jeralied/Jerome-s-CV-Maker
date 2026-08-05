@@ -27,7 +27,7 @@ function esc(s) {
 function selectTrack(t, evt) {
   track = t;
   document.querySelectorAll('.track-card').forEach(c => c.classList.remove('selected'));
-  const card = (evt && evt.currentTarget) || document.querySelector(⁠ .track-card[data-track="${t}"] ⁠);
+  const card = (evt && evt.currentTarget) || document.querySelector(`.track-card[data-track="${t}"]`);
   card.classList.add('selected');
   document.getElementById('continueBtn').disabled = false;
 }
@@ -37,9 +37,9 @@ function goToStep2() {
   if (!currentCvId) currentCvId = makeCvId();
   document.getElementById('step1').style.display = 'none';
   document.getElementById('workspace').classList.add('active');
-  document.getElementById('photoField').style.display = track === 'cabin' ? 'block' : 'none';
-  document.getElementById('languagesField').style.display = track === 'cabin' ? 'block' : 'none';
-  document.getElementById('atsBar').style.display = track === 'tech' ? 'flex' : 'none';
+  document.getElementById('photoField').style.display = track === 'cabin'? 'block' : 'none';
+  document.getElementById('languagesField').style.display = track === 'cabin'? 'block' : 'none';
+  document.getElementById('atsBar').style.display = track === 'tech'? 'flex' : 'none';
   renderProfileSwitcher();
   renderCvSwitcher();
   renderRepeaters();
@@ -55,15 +55,15 @@ function goToStep1() {
 
 function renderProfileSwitcher() {
   document.getElementById('profileSwitcher').innerHTML = Object.keys(TRACK_LABELS).map(k =>
-    ⁠ <button class="profile-btn ${k === track ? 'active' : ''}" onclick="switchProfile('${k}')">${TRACK_LABELS[k]}</button> ⁠
+    `<button class="profile-btn ${k === track? 'active' : ''}" onclick="switchProfile('${k}')">${TRACK_LABELS[k]}</button>`
   ).join('');
 }
 
 function switchProfile(t) {
   track = t;
-  document.getElementById('photoField').style.display = track === 'cabin' ? 'block' : 'none';
-  document.getElementById('languagesField').style.display = track === 'cabin' ? 'block' : 'none';
-  document.getElementById('atsBar').style.display = track === 'tech' ? 'flex' : 'none';
+  document.getElementById('photoField').style.display = track === 'cabin'? 'block' : 'none';
+  document.getElementById('languagesField').style.display = track === 'cabin'? 'block' : 'none';
+  document.getElementById('atsBar').style.display = track === 'tech'? 'flex' : 'none';
   renderProfileSwitcher();
   render();
 }
@@ -76,7 +76,7 @@ function handlePhoto(e) {
   const reader = new FileReader();
   reader.onload = ev => {
     photoData = ev.target.result;
-    document.getElementById('photoPreview').innerHTML = ⁠ <img src="${photoData}" alt=""> ⁠;
+    document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="">`;
     render();
   };
   reader.readAsDataURL(file);
@@ -92,7 +92,7 @@ function removeEducation(i) { educations.splice(i, 1); renderRepeaters(); render
 function renderRepeaters() {
   document.getElementById('experienceList').innerHTML = experiences.map((exp, i) => `
     <div class="repeat-block">
-      ${experiences.length > 1 ? ⁠ <button class="repeat-remove" onclick="removeExperience(${i})" aria-label="Remove this experience entry">×</button> ⁠ : ''}
+      ${experiences.length > 1? `<button class="repeat-remove" onclick="removeExperience(${i})" aria-label="Remove this experience entry">×</button>` : ''}
       <div class="row2">
         <div class="field"><label>Role</label><input value="${esc(exp.role)}" oninput="experiences[${i}].role=this.value; render()" placeholder="Software Engineer"></div>
         <div class="field"><label>Company</label><input value="${esc(exp.company)}" oninput="experiences[${i}].company=this.value; render()" placeholder="Acme Inc."></div>
@@ -104,7 +104,7 @@ function renderRepeaters() {
 
   document.getElementById('educationList').innerHTML = educations.map((edu, i) => `
     <div class="repeat-block">
-      ${educations.length > 1 ? ⁠ <button class="repeat-remove" onclick="removeEducation(${i})" aria-label="Remove this education entry">×</button> ⁠ : ''}
+      ${educations.length > 1? `<button class="repeat-remove" onclick="removeEducation(${i})" aria-label="Remove this education entry">×</button>` : ''}
       <div class="field"><label>Qualification</label><input value="${esc(edu.degree)}" oninput="educations[${i}].degree=this.value; render()" placeholder="BSc Computer Science"></div>
       <div class="row2">
         <div class="field"><label>Institution</label><input value="${esc(edu.school)}" oninput="educations[${i}].school=this.value; render()" placeholder="University of Ghana"></div>
@@ -137,25 +137,25 @@ function handleSkillBlur() {
 function removeSkill(i) { skills.splice(i, 1); renderSkillChips(); render(); }
 function renderSkillChips() {
   document.getElementById('skillChips').innerHTML = skills.map((s, i) =>
-    ⁠ <span class="chip">${esc(s)}<button onclick="removeSkill(${i})" aria-label="Remove skill ${esc(s)}">×</button></span> ⁠).join('');
+    `<span class="chip">${esc(s)}<button onclick="removeSkill(${i})" aria-label="Remove skill ${esc(s)}">×</button></span>`).join('');
 }
 
 /* ---------- Collect + render ---------- */
 
 function collectData() {
   const expStr = experiences
-    .filter(e => e.role || e.company)
-    .map(e => {
+   .filter(e => e.role || e.company)
+   .map(e => {
       const head = [esc(e.role), esc(e.company)].filter(Boolean).join(' — ');
-      const date = e.dates ? ` (${esc(e.dates)})` : '';
-      return ⁠ ${head}${date}${e.desc ? '\n' + esc(e.desc) : ''} ⁠;
+      const date = e.dates? ` (${esc(e.dates)})` : '';
+      return `${head}${date}${e.desc? '\n' + esc(e.desc) : ''}`;
     }).join('\n\n');
 
   const eduStr = educations
-    .filter(e => e.degree || e.school)
-    .map(e => {
+   .filter(e => e.degree || e.school)
+   .map(e => {
       const head = [esc(e.degree), esc(e.school)].filter(Boolean).join(' — ');
-      return ⁠ ${head}${e.year ? ' (' + esc(e.year) + ')' : ''} ⁠;
+      return `${head}${e.year? ' (' + esc(e.year) + ')' : ''}`;
     }).join('\n');
 
   return {
@@ -185,7 +185,7 @@ function render() {
   updateATS(data);
 
   const downloadBtn = document.getElementById('downloadBtn');
-  if (downloadBtn) downloadBtn.disabled = !document.getElementById('fullName').value.trim();
+  if (downloadBtn) downloadBtn.disabled =!document.getElementById('fullName').value.trim();
 
   saveActiveCv();
 }
@@ -209,7 +209,7 @@ function applyFormattingToSheet() {
   sheet.style.setProperty('--cv-scale', cvFontScale);
   sheet.style.setProperty('--user-font', FONT_STACKS[cvFontFamily] || 'inherit');
   const cvEl = sheet.querySelector('.cv');
-  if (cvEl) cvEl.classList.toggle('font-override', cvFontFamily !== 'default');
+  if (cvEl) cvEl.classList.toggle('font-override', cvFontFamily!== 'default');
 }
 
 /* ---------- Saved CVs (localStorage registry) ---------- */
@@ -218,8 +218,8 @@ function applyFormattingToSheet() {
 function loadRegistry() {
   try {
     const raw = localStorage.getItem(REGISTRY_KEY);
-    const parsed = raw ? JSON.parse(raw) : null;
-    return (parsed && parsed.cvs) ? parsed : { activeId: null, cvs: {} };
+    const parsed = raw? JSON.parse(raw) : null;
+    return (parsed && parsed.cvs)? parsed : { activeId: null, cvs: {} };
   } catch (err) { return { activeId: null, cvs: {} }; }
 }
 
@@ -246,8 +246,8 @@ function applyCvSnapshot(cv) {
   track = cv.track || null;
   photoData = cv.photoData || null;
   skills = cv.skills || [];
-  experiences = (cv.experiences && cv.experiences.length) ? cv.experiences : [{ role: '', company: '', dates: '', desc: '' }];
-  educations = (cv.educations && cv.educations.length) ? cv.educations : [{ degree: '', school: '', year: '' }];
+  experiences = (cv.experiences && cv.experiences.length)? cv.experiences : [{ role: '', company: '', dates: '', desc: '' }];
+  educations = (cv.educations && cv.educations.length)? cv.educations : [{ degree: '', school: '', year: '' }];
   currentCvId = cv.id;
   currentCvName = cv.name || 'Untitled CV';
   cvFontFamily = cv.fontFamily || 'default';
@@ -255,22 +255,22 @@ function applyCvSnapshot(cv) {
 
   document.getElementById('step1').style.display = 'none';
   document.getElementById('workspace').classList.add('active');
-  document.getElementById('photoField').style.display = track === 'cabin' ? 'block' : 'none';
-  document.getElementById('languagesField').style.display = track === 'cabin' ? 'block' : 'none';
-  document.getElementById('atsBar').style.display = track === 'tech' ? 'flex' : 'none';
+  document.getElementById('photoField').style.display = track === 'cabin'? 'block' : 'none';
+  document.getElementById('languagesField').style.display = track === 'cabin'? 'block' : 'none';
+  document.getElementById('atsBar').style.display = track === 'tech'? 'flex' : 'none';
 
   FIELD_IDS.forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.value = (cv.fields && cv.fields[id] !== undefined) ? cv.fields[id] : '';
+    if (el) el.value = (cv.fields && cv.fields[id]!== undefined)? cv.fields[id] : '';
   });
-  document.getElementById('photoPreview').innerHTML = photoData ? ⁠ <img src="${photoData}" alt=""> ⁠ : 'No photo';
+  document.getElementById('photoPreview').innerHTML = photoData? `<img src="${photoData}" alt="">` : 'No photo';
   document.getElementById('fontFamily').value = cvFontFamily;
   document.getElementById('fontScale').value = String(cvFontScale);
 
   document.querySelectorAll('.track-card').forEach(c => c.classList.remove('selected'));
-  const card = document.querySelector(⁠ .track-card[data-track="${track}"] ⁠);
+  const card = document.querySelector(`.track-card[data-track="${track}"]`);
   if (card) card.classList.add('selected');
-  document.getElementById('continueBtn').disabled = !track;
+  document.getElementById('continueBtn').disabled =!track;
 
   renderProfileSwitcher();
   renderCvSwitcher();
@@ -336,7 +336,7 @@ function deleteCv(id, evt) {
   const reg = loadRegistry();
   const cv = reg.cvs[id];
   if (!cv) return;
-  if (!confirm(⁠ Delete "${cv.name}"? This can't be undone. ⁠)) return;
+  if (!confirm(`Delete "${cv.name}"? This can't be undone.`)) return;
 
   delete reg.cvs[id];
   const remainingIds = Object.keys(reg.cvs);
@@ -370,7 +370,7 @@ function renderCvSwitcher() {
     const active = id === currentCvId;
     const label = TRACK_LABELS[cv.track] || 'No track yet';
     return `
-      <button class="cv-switcher-item ${active ? 'active' : ''}" onclick="openSavedCv('${id}')">
+      <button class="cv-switcher-item ${active? 'active' : ''}" onclick="openSavedCv('${id}')">
         <span class="cv-switcher-name">${esc(cv.name)}</span>
         <span class="cv-switcher-track">${label}</span>
         <span class="cv-switcher-delete" onclick="deleteCv('${id}', event)" aria-label="Delete ${esc(cv.name)}" role="button">×</span>
@@ -396,7 +396,7 @@ function toggleCvMenu() {
 document.addEventListener('click', (e) => {
   const switcher = document.getElementById('cvSwitcher');
   const menu = document.getElementById('cvSwitcherMenu');
-  if (switcher && menu && !switcher.contains(e.target)) menu.classList.remove('open');
+  if (switcher && menu &&!switcher.contains(e.target)) menu.classList.remove('open');
 });
 
 function restoreOnLoad() {
@@ -433,7 +433,7 @@ function updateATS(data) {
   if (experiences.some(e => e.desc && e.desc.length > 20)) score += 25;
   score = Math.min(100, score);
 
-  const note = score >= 80 ? 'looking strong' : score >= 50 ? 'add a bit more detail' : 'keep filling in the sections above';
+  const note = score >= 80? 'looking strong' : score >= 50? 'add a bit more detail' : 'keep filling in the sections above';
   document.getElementById('atsScore').textContent = score + '%';
   document.getElementById('atsNote').textContent = note;
 }
@@ -473,7 +473,7 @@ function downloadPDF() {
 
   html2pdf().set({
     margin: 0.4,
-    filename: ⁠ CV-${name}-${track}.pdf ⁠,
+    filename: `CV-${name}-${track}.pdf`,
     html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: window.innerWidth },
     jsPDF: { unit: 'in', format: 'a4' },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
