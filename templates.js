@@ -28,7 +28,6 @@ const TEMPLATES = {
   },
 
   cabin: (d) => {
-    cabin: (d) => {
 
 const photoHTML = d.photo
 ? `<img src="${d.photo}" class="passport-photo" alt="">`
@@ -160,3 +159,5 @@ ${d.cabinTraining ?
 `;
 
 },
+
+corporate: (d) => {
