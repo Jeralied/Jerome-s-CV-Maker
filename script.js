@@ -15,6 +15,8 @@ const FIELD_IDS = ['fullName', 'roleTitle', 'email', 'phone', 'location', 'linke
 const REGISTRY_KEY = 'jeromecv:registry';
 let currentCvId = null;
 let currentCvName = 'Untitled CV';
+let cvFontFamily = 'default';
+let cvFontScale = 1;
 
 function esc(s) {
   return (s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -165,13 +167,37 @@ function render() {
   if (!track) return;
   const data = collectData();
   const fn = TEMPLATES[track] || TEMPLATES.corporate;
-  document.getElementById('sheetLive').innerHTML = fn(data);
+  const sheet = document.getElementById('sheetLive');
+  sheet.innerHTML = fn(data);
+  applyFormattingToSheet();
   updateATS(data);
 
   const downloadBtn = document.getElementById('downloadBtn');
   if (downloadBtn) downloadBtn.disabled = !document.getElementById('fullName').value.trim();
 
   saveActiveCv();
+}
+
+const FONT_STACKS = {
+  arial: "Arial, Helvetica, sans-serif",
+  calibri: "Calibri, 'Segoe UI', sans-serif",
+  times: "'Times New Roman', Times, serif"
+};
+
+function updateFormatting() {
+  cvFontFamily = document.getElementById('fontFamily').value;
+  cvFontScale = parseFloat(document.getElementById('fontScale').value) || 1;
+  applyFormattingToSheet();
+  saveActiveCv();
+}
+
+function applyFormattingToSheet() {
+  const sheet = document.getElementById('sheetLive');
+  if (!sheet) return;
+  sheet.style.setProperty('--cv-scale', cvFontScale);
+  sheet.style.setProperty('--user-font', FONT_STACKS[cvFontFamily] || 'inherit');
+  const cvEl = sheet.querySelector('.cv');
+  if (cvEl) cvEl.classList.toggle('font-override', cvFontFamily !== 'default');
 }
 
 /* ---------- Saved CVs (localStorage registry) ---------- */
@@ -199,7 +225,8 @@ function snapshotCurrentCv() {
     id: currentCvId,
     name: currentCvName,
     savedAt: Date.now(),
-    track, photoData, skills, experiences, educations, fields
+    track, photoData, skills, experiences, educations, fields,
+    fontFamily: cvFontFamily, fontScale: cvFontScale
   };
 }
 
@@ -211,6 +238,8 @@ function applyCvSnapshot(cv) {
   educations = (cv.educations && cv.educations.length) ? cv.educations : [{ degree: '', school: '', year: '' }];
   currentCvId = cv.id;
   currentCvName = cv.name || 'Untitled CV';
+  cvFontFamily = cv.fontFamily || 'default';
+  cvFontScale = cv.fontScale || 1;
 
   document.getElementById('step1').style.display = 'none';
   document.getElementById('workspace').classList.add('active');
@@ -222,6 +251,8 @@ function applyCvSnapshot(cv) {
     if (el) el.value = (cv.fields && cv.fields[id] !== undefined) ? cv.fields[id] : '';
   });
   document.getElementById('photoPreview').innerHTML = photoData ? `<img src="${photoData}" alt="">` : 'No photo';
+  document.getElementById('fontFamily').value = cvFontFamily;
+  document.getElementById('fontScale').value = String(cvFontScale);
 
   document.querySelectorAll('.track-card').forEach(c => c.classList.remove('selected'));
   const card = document.querySelector(`.track-card[data-track="${track}"]`);
@@ -254,9 +285,13 @@ function startNewCv() {
   skills = [];
   experiences = [{ role: '', company: '', dates: '', desc: '' }];
   educations = [{ degree: '', school: '', year: '' }];
+  cvFontFamily = 'default';
+  cvFontScale = 1;
 
   FIELD_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('photoPreview').innerHTML = 'No photo';
+  document.getElementById('fontFamily').value = 'default';
+  document.getElementById('fontScale').value = '1';
   document.querySelectorAll('.track-card').forEach(c => c.classList.remove('selected'));
   document.getElementById('continueBtn').disabled = true;
   document.getElementById('profileSwitcher').innerHTML = '';
@@ -401,13 +436,35 @@ function downloadPDF() {
   }
   const el = document.getElementById('sheetLive');
   const name = rawName.replace(/\s+/g, '-');
+
+  // html2canvas captures based on current scroll position. If the page itself is
+  // scrolled, or the preview panel's own internal scroll container isn't at the
+  // top, the capture can come out blank or cut off. Reset everything scrollable
+  // first, capture, then put scroll positions back.
+  const scrollers = [];
+  let node = el.parentElement;
+  while (node) {
+    if (node.scrollHeight > node.clientHeight) {
+      scrollers.push({ node, top: node.scrollTop });
+      node.scrollTop = 0;
+    }
+    node = node.parentElement;
+  }
+  const pageScrollY = window.scrollY;
+  window.scrollTo(0, 0);
+
+  const restoreScroll = () => {
+    scrollers.forEach(s => { s.node.scrollTop = s.top; });
+    window.scrollTo(0, pageScrollY);
+  };
+
   html2pdf().set({
     margin: 0.4,
     filename: `CV-${name}-${track}.pdf`,
-    html2canvas: { scale: 2, useCORS: true },
+    html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: window.innerWidth },
     jsPDF: { unit: 'in', format: 'a4' },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-  }).from(el).save();
+  }).from(el).save().then(restoreScroll).catch(restoreScroll);
 }
 
 /* ---------- Cover letter modal ---------- */
