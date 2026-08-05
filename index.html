@@ -14,6 +14,7 @@
 
   <div class="topbar">
     <div class="brand-mark">Jerome<em>CV</em></div>
+    <div class="cv-switcher" id="cvSwitcher"></div>
     <div class="profile-switcher" id="profileSwitcher"></div>
     <button class="btn btn-green" style="width:auto;" onclick="openModal('coverLetter')">Cover Letter AI</button>
   </div>
@@ -96,6 +97,28 @@
       <div class="form-eyebrow">Certifications &amp; awards <span class="optional-tag">optional</span></div>
       <div class="field"><textarea id="certs" placeholder="AWS Certified Developer, 2024" oninput="render()"></textarea></div>
 
+      <div class="form-eyebrow">Formatting</div>
+      <div class="row2">
+        <div class="field">
+          <label for="fontFamily">Font</label>
+          <select id="fontFamily" onchange="updateFormatting()">
+            <option value="default">Default (matches track)</option>
+            <option value="arial">Arial</option>
+            <option value="calibri">Calibri</option>
+            <option value="times">Times New Roman</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fontScale">Size</label>
+          <select id="fontScale" onchange="updateFormatting()">
+            <option value="0.9">Compact</option>
+            <option value="1" selected>Standard</option>
+            <option value="1.12">Comfortable</option>
+            <option value="1.25">Large</option>
+          </select>
+        </div>
+      </div>
+
       <div class="ats-bar" id="atsBar" style="display:none;">
         <div class="ats-score" id="atsScore">0%</div>
         <div class="ats-label">ATS readiness — <span id="atsNote">fill in more fields</span></div>
@@ -110,7 +133,7 @@
         <button class="btn btn-ghost" onclick="goToStep1()">← Back</button>
         <button class="btn btn-primary" id="downloadBtn" onclick="downloadPDF()">Download PDF</button>
       </div>
-      <button class="start-over-link" onclick="startOver()">Start over with a blank CV</button>
+      <button class="start-over-link" onclick="startNewCv()">+ Start a new CV</button>
     </div>
 
     <div class="panel-preview">
