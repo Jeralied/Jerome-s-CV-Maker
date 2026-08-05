@@ -116,14 +116,23 @@ function renderRepeaters() {
 
 /* ---------- Skills ---------- */
 
-function handleSkillEnter(e) {
-  if (e.key === 'Enter' && e.target.value.trim()) {
+function addSkillFromInput() {
+  const input = document.getElementById('skillInput');
+  const value = input.value.trim();
+  if (!value) return;
+  skills.push(value);
+  input.value = '';
+  renderSkillChips();
+  render();
+}
+function handleSkillKeydown(e) {
+  if (e.key === 'Enter' || e.key === ',') {
     e.preventDefault();
-    skills.push(e.target.value.trim());
-    e.target.value = '';
-    renderSkillChips();
-    render();
+    addSkillFromInput();
   }
+}
+function handleSkillBlur() {
+  addSkillFromInput(); // don't silently lose whatever was typed if they click away
 }
 function removeSkill(i) { skills.splice(i, 1); renderSkillChips(); render(); }
 function renderSkillChips() {
