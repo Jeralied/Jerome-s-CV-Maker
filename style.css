@@ -256,7 +256,8 @@ body{
 }
 .cv .section p{margin:0; font-size:calc(11.5px * var(--cv-scale, 1)); line-height:1.6;}
 .exp-block{font-size:calc(11.5px * var(--cv-scale, 1)); line-height:1.65; white-space:pre-line;}
-.two-col{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+.two-col{display:flex; gap:20px;}
+.two-col > div, .two-col > .section{flex:1; min-width:0;}
 
 /* Tech */
 .cv-tech{font-family:var(--font-mono);}
