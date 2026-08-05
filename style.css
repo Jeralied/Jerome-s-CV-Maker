@@ -334,3 +334,10 @@ body{
 .header-info h2{ font-size:11pt !important; } /* Cabin header title */
 .contact-bar, .contact-line{ font-size:10pt !important; } /* Contact info */
 .skills-grid span{ font-size:10pt !important; } /* Skills chips */
+/* FORCE TEXT VISIBLE FOR PDF */
+@media print, screen {
+  .sheet, .cv, .cv * {
+    color: #000 !important;
+    background: #fff !important;
+  }
+}
