@@ -1,78 +1,223 @@
-<script>
-let track = null; let photoData = null; let skills = [];
-let experiences = [{title:'', org:'', date:'', desc:''}];
-let educations = [{title:'', org:'', date:''}];
-const tint = {tech:'#000000', cabin:'#B8860B', bank:'#1a1a1a'}; // all professional now
-const accent = {tech:'#000', cabin:'#B8860B', bank:'#1a1a1a'};
-const trackLabel = {tech:'Tech / CS', cabin:'Cabin Crew', bank:'Banking / Corporate'};
+// script.js
+// Owns app state and talks to TEMPLATES (templates.js) to render the live CV.
 
-function selectTrack(t){ track = t; document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('selected')); document.querySelector(`.track-card[data-track="${t}"]`).classList.add('selected'); document.getElementById('continueBtn').disabled = false; document.getElementById('photoField').style.display = (t === 'cabin')? 'block' : 'none'; }
-function goToStep2(){ document.getElementById('step1').style.display = 'none'; document.getElementById('workspace').classList.add('active'); document.getElementById('stepIndicator').innerHTML = `<b>02</b> Tell us about you · ${trackLabel[track]}`; document.getElementById('trackCaption').textContent = trackLabel[track]; renderRepeaters(); render(); }
-function goToStep1(){ document.getElementById('step1').style.display = 'block'; document.getElementById('workspace').classList.remove('active'); document.getElementById('review').classList.remove('active'); }
-function goToStep3(){ document.getElementById('workspace').classList.remove('active'); document.getElementById('review').classList.add('active'); render(); }
-function handlePhoto(e){ const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(ev){ photoData = ev.target.result; document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="">`; render(); }; reader.readAsDataURL(file); }
-function addExperience(){ experiences.push({title:'', org:'', date:'', desc:''}); renderRepeaters(); }
-function removeExperience(i){ experiences.splice(i,1); renderRepeaters(); render(); }
-function addEducation(){ educations.push({title:'', org:'', date:''}); renderRepeaters(); }
-function removeEducation(i){ educations.splice(i,1); renderRepeaters(); render(); }
-function renderRepeaters(){
-  document.getElementById('experienceList').innerHTML = experiences.map((exp, i) => `<div class="repeat-block">${experiences.length > 1? `<button class="repeat-remove" onclick="removeExperience(${i})">×</button>` : ''}<div class="row2"><div class="field"><label>Role</label><input value="${exp.title}" oninput="experiences[${i}].title=this.value; render()"></div><div class="field"><label>Company</label><input value="${exp.org}" oninput="experiences[${i}].org=this.value; render()"></div></div><div class="field"><label>Dates</label><input value="${exp.date}" oninput="experiences[${i}].date=this.value; render()"></div><div class="field"><label>Achievements - Start with bullet •</label><textarea oninput="experiences[${i}].desc=this.value; render()" placeholder="• Increased sales by 32%...">${exp.desc}</textarea></div></div>`).join('');
-  document.getElementById('educationList').innerHTML = educations.map((edu, i) => `<div class="repeat-block">${educations.length > 1? `<button class="repeat-remove" onclick="removeEducation(${i})">×</button>` : ''}<div class="field"><label>Degree</label><input value="${edu.title}" oninput="educations[${i}].title=this.value; render()"></div><div class="row2"><div class="field"><label>Institution</label><input value="${edu.org}" oninput="educations[${i}].org=this.value; render()"></div><div class="field"><label>Year</label><input value="${edu.date}" oninput="educations[${i}].date=this.value; render()"></div></div></div>`).join('');
+let track = null;
+let photoData = null;
+let skills = [];
+let experiences = [{ role: '', company: '', dates: '', desc: '' }];
+let educations = [{ degree: '', school: '', year: '' }];
+
+const TRACK_LABELS = { tech: 'Tech / CS', cabin: 'Cabin Crew', corporate: 'Banking / Corporate' };
+
+function esc(s) {
+  return (s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 }
-function handleSkillEnter(e){ if(e.key === 'Enter' && e.target.value.trim()){ skills.push(e.target.value.trim()); e.target.value = ''; renderSkillChips(); render(); } }
-function removeSkill(i){ skills.splice(i,1); renderSkillChips(); render(); }
-function renderSkillChips(){ document.getElementById('skillChips').innerHTML = skills.map((s,i) => `<span class="chip">${s}<button onclick="removeSkill(${i})">×</button></span>`).join(''); }
 
-function buildSheetHTML(){
-  const name = document.getElementById('fullName').value || 'YOUR NAME';
-  const role = document.getElementById('roleTitle').value || 'TARGET ROLE';
-  const email = document.getElementById('email').value; const phone = document.getElementById('phone').value;
-  const location = document.getElementById('location').value; const linkedin = document.getElementById('linkedin').value;
-  const summary = document.getElementById('summary').value;
-  const contactBits = [email][phone][location][linkedin].filter(Boolean).join(' | ');
-  const skillsHTML = skills.length? `<div style="columns:3; font-size:10.5px;">${skills.map(s=>`• ${s}<br>`).join('')}</div>` : ``;
-  const expHTML = experiences.filter(e=>e.title||e.org).map(e => `<div style="margin-bottom:10px;"><div style="display:flex; justify-content:space-between;"><b>${e.title||'Role'}</b><span style="font-size:10px;">${e.date}</span></div><div style="font-size:11px; font-style:italic;">${e.org||''}</div><div style="font-size:10.5px; white-space:pre-line; line-height:1.4;">${e.desc}</div></div>`).join('');
-  const eduHTML = educations.filter(e=>e.title||e.org).map(e => `<div style="margin-bottom:8px;"><div style="display:flex; justify-content:space-between;"><b>${e.title}</b><span style="font-size:10px;">${e.date}</span></div><div style="font-size:11px;">${e.org}</div></div>`).join('');
+/* ---------- Track selection ---------- */
 
-  let headerRow = ''; let bodyOrder = ''; let layoutClass = ''; let font = 'Arial, sans-serif';
+function selectTrack(t, evt) {
+  track = t;
+  document.querySelectorAll('.track-card').forEach(c => c.classList.remove('selected'));
+  const card = (evt && evt.currentTarget) || document.querySelector(`.track-card[data-track="${t}"]`);
+  card.classList.add('selected');
+  document.getElementById('continueBtn').disabled = false;
+}
 
-  if(track === 'tech'){ // ATS TEMPLATE
-    layoutClass = 'layout-tech';
-    font = "'IBM Plex Mono', monospace";
-    headerRow = `<div style="text-align:center; border-bottom:2px solid #000; padding-bottom:8px;"><h1 class="cv-name" style="font-size:20px; margin:0;">${name.toUpperCase()}</h1><div class="cv-role" style="font-size:11px;">${role.toUpperCase()}</div><div class="cv-contact" style="font-size:10px; justify-content:center;">${contactBits}</div></div>`;
-    bodyOrder = summary? `<div class="cv-section-title">SUMMARY</div><p style="font-size:10.5px; line-height:1.4;">${summary}</p>` : '' + `<div class="cv-section-title">TECHNICAL SKILLS</div>` + skillsHTML + `<div class="cv-section-title">PROFESSIONAL EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">EDUCATION</div>` + eduHTML;
+function goToStep2() {
+  if (!track) return;
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('workspace').classList.add('active');
+  document.getElementById('photoField').style.display = track === 'cabin' ? 'block' : 'none';
+  document.getElementById('atsBar').style.display = track === 'tech' ? 'flex' : 'none';
+  renderProfileSwitcher();
+  renderRepeaters();
+  renderSkillChips();
+  render();
+}
 
-  } else if(track === 'cabin'){ // AIRLINE TEMPLATE
-    layoutClass = 'layout-cabin';
-    font = "'Fraunces', serif";
-    const photoHTML = photoData? `<img src="${photoData}" alt="">` : '';
-    headerRow = `<div class="cv-header-row"><div class="cv-photo">${photoHTML}</div><div><h1 class="cv-name" style="font-size:24px;">${name}</h1><div class="cv-role">${role}</div><div class="cv-contact">${contactBits}</div></div></div>`;
-    bodyOrder = `<div class="cv-section-title">PROFESSIONAL PROFILE</div><p style="font-size:11px; line-height:1.5;">${summary}</p>` + `<div class="cv-section-title">LANGUAGES</div><p style="font-size:11px;">English - Fluent • French - Conversational • Twi - Native</p>` + `<div class="cv-section-title">WORK EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">EDUCATION & TRAINING</div>` + eduHTML + `<div class="cv-section-title">CORE COMPETENCIES</div>` + skillsHTML;
+function goToStep1() {
+  document.getElementById('step1').style.display = 'block';
+  document.getElementById('workspace').classList.remove('active');
+  document.getElementById('profileSwitcher').innerHTML = '';
+}
 
-  } else { // BANKING TEMPLATE
-    layoutClass = 'layout-bank';
-    font = "'Times New Roman', serif";
-    headerRow = `<div style="text-align:center;"><h1 class="cv-name">${name}</h1><div class="cv-role">${role}</div><div class="cv-contact">${contactBits}</div></div>`;
-    bodyOrder = `<div class="cv-section-title">EDUCATION</div>` + eduHTML + `<div class="cv-section-title">PROFESSIONAL EXPERIENCE</div>` + expHTML + `<div class="cv-section-title">PROFESSIONAL SUMMARY</div><p style="font-size:11px;">${summary}</p>` + `<div class="cv-section-title">KEY SKILLS</div>` + `<p style="font-size:11px;">${skills.join(' • ')}</p>`;
+function renderProfileSwitcher() {
+  document.getElementById('profileSwitcher').innerHTML = Object.keys(TRACK_LABELS).map(k =>
+    `<button class="profile-btn ${k === track ? 'active' : ''}" onclick="switchProfile('${k}')">${TRACK_LABELS[k]}</button>`
+  ).join('');
+}
+
+function switchProfile(t) {
+  track = t;
+  document.getElementById('photoField').style.display = track === 'cabin' ? 'block' : 'none';
+  document.getElementById('atsBar').style.display = track === 'tech' ? 'flex' : 'none';
+  renderProfileSwitcher();
+  render();
+}
+
+/* ---------- Photo ---------- */
+
+function handlePhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    photoData = ev.target.result;
+    document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="">`;
+    render();
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ---------- Repeatable experience / education ---------- */
+
+function addExperience() { experiences.push({ role: '', company: '', dates: '', desc: '' }); renderRepeaters(); }
+function removeExperience(i) { experiences.splice(i, 1); renderRepeaters(); render(); }
+function addEducation() { educations.push({ degree: '', school: '', year: '' }); renderRepeaters(); }
+function removeEducation(i) { educations.splice(i, 1); renderRepeaters(); render(); }
+
+function renderRepeaters() {
+  document.getElementById('experienceList').innerHTML = experiences.map((exp, i) => `
+    <div class="repeat-block">
+      ${experiences.length > 1 ? `<button class="repeat-remove" onclick="removeExperience(${i})">×</button>` : ''}
+      <div class="row2">
+        <div class="field"><label>Role</label><input value="${esc(exp.role)}" oninput="experiences[${i}].role=this.value; render()" placeholder="Software Engineer"></div>
+        <div class="field"><label>Company</label><input value="${esc(exp.company)}" oninput="experiences[${i}].company=this.value; render()" placeholder="Acme Inc."></div>
+      </div>
+      <div class="field"><label>Dates</label><input value="${esc(exp.dates)}" oninput="experiences[${i}].dates=this.value; render()" placeholder="2023 — Present"></div>
+      <div class="field"><label>What you did</label><textarea oninput="experiences[${i}].desc=this.value; render()" placeholder="Lead with the result, e.g. Increased sales by 32%...">${exp.desc}</textarea></div>
+    </div>
+  `).join('');
+
+  document.getElementById('educationList').innerHTML = educations.map((edu, i) => `
+    <div class="repeat-block">
+      ${educations.length > 1 ? `<button class="repeat-remove" onclick="removeEducation(${i})">×</button>` : ''}
+      <div class="field"><label>Qualification</label><input value="${esc(edu.degree)}" oninput="educations[${i}].degree=this.value; render()" placeholder="BSc Computer Science"></div>
+      <div class="row2">
+        <div class="field"><label>Institution</label><input value="${esc(edu.school)}" oninput="educations[${i}].school=this.value; render()" placeholder="University of Ghana"></div>
+        <div class="field"><label>Year</label><input value="${esc(edu.year)}" oninput="educations[${i}].year=this.value; render()" placeholder="2024"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ---------- Skills ---------- */
+
+function handleSkillEnter(e) {
+  if (e.key === 'Enter' && e.target.value.trim()) {
+    e.preventDefault();
+    skills.push(e.target.value.trim());
+    e.target.value = '';
+    renderSkillChips();
+    render();
   }
-  return {html: `<div style="font-family:${font};">` + headerRow + bodyOrder + `</div>`, layoutClass};
+}
+function removeSkill(i) { skills.splice(i, 1); renderSkillChips(); render(); }
+function renderSkillChips() {
+  document.getElementById('skillChips').innerHTML = skills.map((s, i) =>
+    `<span class="chip">${esc(s)}<button onclick="removeSkill(${i})">×</button></span>`).join('');
 }
 
-function render(){
-  if(!track) return;
-  const {html, layoutClass} = buildSheetHTML();
-  const acc = accent[track]; const tin = tint[track];
-  ['sheetLive','sheetFinal'].forEach(id=>{
-    const el = document.getElementById(id); if(!el) return;
-    el.className = 'sheet ' + layoutClass;
-    el.style.setProperty('--accent', acc); el.style.setProperty('--accent-tint', tin);
-    el.innerHTML = html;
-  });
+/* ---------- Collect + render ---------- */
+
+function collectData() {
+  const expStr = experiences
+    .filter(e => e.role || e.company)
+    .map(e => {
+      const head = [esc(e.role), esc(e.company)].filter(Boolean).join(' — ');
+      const date = e.dates ? ` (${esc(e.dates)})` : '';
+      return `${head}${date}${e.desc ? '\n' + esc(e.desc) : ''}`;
+    }).join('\n\n');
+
+  const eduStr = educations
+    .filter(e => e.degree || e.school)
+    .map(e => {
+      const head = [esc(e.degree), esc(e.school)].filter(Boolean).join(' — ');
+      return `${head}${e.year ? ' (' + esc(e.year) + ')' : ''}`;
+    }).join('\n');
+
+  return {
+    name: esc(document.getElementById('fullName').value),
+    title: esc(document.getElementById('roleTitle').value),
+    email: esc(document.getElementById('email').value),
+    phone: esc(document.getElementById('phone').value),
+    location: esc(document.getElementById('location').value),
+    linkedin: esc(document.getElementById('linkedin').value),
+    summary: esc(document.getElementById('summary').value),
+    skills: skills.map(esc).join(' | '),
+    experience: expStr,
+    education: eduStr,
+    certs: esc(document.getElementById('certs').value),
+    photo: photoData
+  };
 }
 
-function downloadPDF(){
-  const element = document.getElementById('sheetFinal');
-  html2pdf().set({ margin: [0.5, 0.5, 0.5, 0.5], filename: `CV-${document.getElementById('fullName').value || 'Jerome'}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } }).from(element).save();
+function render() {
+  if (!track) return;
+  const data = collectData();
+  const fn = TEMPLATES[track] || TEMPLATES.corporate;
+  document.getElementById('sheetLive').innerHTML = fn(data);
+  updateATS(data);
 }
+
+/* ---------- ATS readiness (tech track) ---------- */
+
+function updateATS(data) {
+  const bar = document.getElementById('atsBar');
+  if (!bar || bar.style.display === 'none') return;
+
+  let score = 0;
+  if (data.name) score += 15;
+  if (data.email && data.phone) score += 15;
+  if (data.summary && data.summary.length > 40) score += 20;
+  if (skills.length >= 4) score += 25;
+  if (experiences.some(e => e.desc && e.desc.length > 20)) score += 25;
+  score = Math.min(100, score);
+
+  const note = score >= 80 ? 'looking strong' : score >= 50 ? 'add a bit more detail' : 'keep filling in the sections above';
+  document.getElementById('atsScore').textContent = score + '%';
+  document.getElementById('atsNote').textContent = note;
+}
+
+/* ---------- PDF download ---------- */
+
+function downloadPDF() {
+  if (!track) return;
+  const el = document.getElementById('sheetLive');
+  const name = (document.getElementById('fullName').value || 'Jerome').trim().replace(/\s+/g, '-');
+  html2pdf().set({
+    margin: 0.4,
+    filename: `CV-${name}-${track}.pdf`,
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'in', format: 'a4' }
+  }).from(el).save();
+}
+
+/* ---------- Cover letter modal ---------- */
+
+function openModal(id) { document.getElementById(id + 'Modal').style.display = 'flex'; }
+function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+
+function generateCoverLetter() {
+  const data = collectData();
+  const company = document.getElementById('companyName').value.trim() || 'your company';
+  const job = document.getElementById('jobTitle').value.trim() || 'this role';
+  const name = data.name || 'Your Name';
+  const topSkills = skills.slice(0, 4).join(', ') || 'a strong mix of relevant skills';
+  const opener = data.summary || "I bring a track record of delivering results and working well with teams.";
+
+  const letter = `Dear Hiring Manager,
+
+I'm writing to apply for ${job} at ${company}. ${opener}
+
+Among the strengths I'd bring to this role: ${topSkills}.
+
+I'd welcome the chance to talk about how I can contribute to ${company}.
+
+Sincerely,
+${name}`;
+
+  document.getElementById('generatedCL').textContent = letter;
+}
+
 renderRepeaters();
-</script>
