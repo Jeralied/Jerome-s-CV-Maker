@@ -205,6 +205,13 @@ body{
 }
 .add-row-btn:hover{border-color:var(--brand); color:var(--brand);}
 
+.skill-input-row{display:flex; gap:8px;}
+.skill-input-row input{flex:1;}
+.skill-add-btn{
+  flex-shrink:0; padding:0 16px; border:1px solid var(--paper-line); border-radius:var(--radius);
+  background:#fff; color:var(--brand); font-weight:600; font-size:13px; cursor:pointer;
+}
+.skill-add-btn:hover{border-color:var(--brand);}
 .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
 .chip{
   background:var(--green-tint); color:var(--green); padding:6px 6px 6px 12px;
