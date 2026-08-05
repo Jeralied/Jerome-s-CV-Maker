@@ -4,167 +4,137 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JeromeCV — Build a CV that fits the job</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<style>
-  :root{ --ink:#161b22; --paper:#f7f5f0; --paper-line:#ddd7c8; --slate:#31353c; --green:#2f8f7e; --font-display:'Fraunces', serif; --font-body:'IBM Plex Sans', sans-serif; }
-  *{box-sizing:border-box;} body{ font-family:var(--font-body); background:var(--paper); color:var(--slate); margin:0; }
-  .app{ max-width:1280px; margin:0 auto; }
-  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:20px; border-bottom:1px solid var(--paper-line); }
-  .brand-mark{ font-family:var(--font-display); font-weight:700; font-size:22px; }
-  .brand-mark em{ color:var(--green); }
-  .hero{ padding:50px 20px; text-align:center; }
-  .hero h1{ font-family:var(--font-display); font-size:clamp(28px, 6vw, 48px); margin:0; }
-  .tracks{ display:grid; grid-template-columns:1fr; gap:16px; padding:0 20px 50px; }
-  .track-card{ background:#fff; border:1px solid var(--paper-line); padding:24px; cursor:pointer; text-align:left; }
-  .track-card.selected{ border:2px solid var(--green); }
-  .btn{ font-weight:600; padding:14px 20px; border:1px solid var(--ink); background:var(--ink); color:#fff; cursor:pointer; width:100%; }
-  .btn-green{ background:var(--green); border-color:var(--green); }
-  .workspace{ display:none; }
-  .workspace.active{ display:block; }
-  .panel-form{ padding:24px; }
-  .panel-preview{ background:#efece4; padding:20px; }
-  .sheet{ background:#fff; padding:30px; min-height:600px; }
-  .field input, .field textarea{ width:100%; padding:12px; border:1px solid var(--paper-line); margin-bottom:12px; }
-  .repeat-block{ border:1px solid var(--paper-line); padding:16px; margin-bottom:12px; }
-  .modal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:999; align-items:center; justify-content:center; padding:20px; }
-  .modal-content{ background:#fff; padding:24px; width:100%; max-width:600px; }
-  
-  @media (min-width: 900px){
-    .tracks{ grid-template-columns:repeat(3, 1fr); padding:0 40px 60px; }
-    .hero{ text-align:left; padding:80px 40px; }
-    .topbar{ padding:24px 40px; }
-    .workspace.active{ display:grid; grid-template-columns:420px 1fr; }
-    .panel-form{ padding:36px; border-right:1px solid var(--paper-line); }
-    .panel-preview{ padding:36px; }
-    .btn{ width:auto; }
-  }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 </head>
 <body>
 <div class="app">
+
   <div class="topbar">
     <div class="brand-mark">Jerome<em>CV</em></div>
-    <button class="btn btn-green" onclick="openModal('coverLetter')">Cover Letter AI</button>
+    <div class="profile-switcher" id="profileSwitcher"></div>
+    <button class="btn btn-green" style="width:auto;" onclick="openModal('coverLetter')">Cover Letter AI</button>
   </div>
 
+  <!-- STEP 1 : choose track -->
   <div id="step1">
-    <div class="hero"><h1>Build a CV that fits the job.</h1><p>Not the other way around.</p></div>
-    <div class="tracks">
-      <div class="track-card" onclick="selectTrack('tech')"><b>01 — Tech / CS</b><h3>Engineering & Product</h3><p>ATS friendly. No photo.</p></div>
-      <div class="track-card" onclick="selectTrack('cabin')"><b>02 — Cabin Crew</b><h3>Airline & Hospitality</h3><p>Photo + Languages first.</p></div>
-      <div class="track-card" onclick="selectTrack('bank')"><b>03 — Banking</b><h3>Finance & Professional</h3><p>Formal and conservative.</p></div>
+    <div class="hero">
+      <div class="hero-eyebrow">Three tracks, one profile</div>
+      <h1>Build a CV that fits the job.</h1>
+      <p class="hero-sub">Not the other way around.</p>
     </div>
-    <div style="text-align:center; padding-bottom:60px;"><button class="btn" id="continueBtn" disabled onclick="goToStep2()">Continue →</button></div>
+
+    <div class="tracks">
+      <button class="track-card" data-track="tech" onclick="selectTrack('tech', event)">
+        <span class="swatch"></span>
+        <span class="ticon">01 — Tech / CS</span>
+        <h3>Engineering &amp; Product</h3>
+        <p>No photo. Skills and projects lead. Built to pass an ATS scan first.</p>
+      </button>
+      <button class="track-card" data-track="cabin" onclick="selectTrack('cabin', event)">
+        <span class="swatch"></span>
+        <span class="ticon">02 — Cabin Crew</span>
+        <h3>Airline &amp; Hospitality</h3>
+        <p>Photo top-left. Languages and personality lead.</p>
+      </button>
+      <button class="track-card" data-track="corporate" onclick="selectTrack('corporate', event)">
+        <span class="swatch"></span>
+        <span class="ticon">03 — Banking / Corporate</span>
+        <h3>Finance &amp; Professional Services</h3>
+        <p>Conservative and exact. Education and experience lead.</p>
+      </button>
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn btn-primary" id="continueBtn" disabled onclick="goToStep2()">Continue →</button>
+    </div>
   </div>
 
+  <!-- STEP 2 : form + live preview -->
   <div class="workspace" id="workspace">
     <div class="panel-form">
-      <h3>Your Details</h3>
-      <div class="field"><input id="fullName" placeholder="Full name" oninput="render()"></div>
-      <div class="field"><input id="roleTitle" placeholder="Target role" oninput="render()"></div>
-      <div class="field"><textarea id="summary" placeholder="Professional Summary" rows="3" oninput="render()"></textarea></div>
-      <h4>Experience</h4>
-      <div id="experienceList"></div><button class="btn" style="background:#fff; color:var(--ink);" onclick="addExperience()">+ Add experience</button>
-      <h4>Skills</h4>
-      <div class="field"><input id="skillInput" placeholder="Type skill + Press Enter" onkeydown="handleSkillEnter(event)"></div>
-      <div id="skillChips" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;"></div>
-      <button class="btn" onclick="downloadPDF()">Download PDF - FREE</button>
+
+      <div class="form-eyebrow">Basics</div>
+      <div class="field"><label for="fullName">Full name</label><input id="fullName" placeholder="Jerome Adjei" oninput="render()"></div>
+      <div class="field"><label for="roleTitle">Target role</label><input id="roleTitle" placeholder="Frontend Engineer" oninput="render()"></div>
+      <div class="row2">
+        <div class="field"><label for="email">Email</label><input id="email" placeholder="jerome@email.com" oninput="render()"></div>
+        <div class="field"><label for="phone">Phone</label><input id="phone" placeholder="+233 20 000 0000" oninput="render()"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="location">Location</label><input id="location" placeholder="Accra, Ghana" oninput="render()"></div>
+        <div class="field"><label for="linkedin">LinkedIn / portfolio</label><input id="linkedin" placeholder="linkedin.com/in/jerome" oninput="render()"></div>
+      </div>
+
+      <div class="field" id="photoField" style="display:none;">
+        <label>Photo</label>
+        <div class="photo-upload">
+          <div class="photo-circle" id="photoPreview">No photo</div>
+          <label class="upload-label">Upload photo<input type="file" accept="image/*" style="display:none" onchange="handlePhoto(event)"></label>
+        </div>
+      </div>
+
+      <div class="form-eyebrow">Summary</div>
+      <div class="field"><textarea id="summary" placeholder="Two or three sentences on what you do and the value you bring." oninput="render()"></textarea></div>
+
+      <div class="form-eyebrow">Experience</div>
+      <div id="experienceList"></div>
+      <button class="add-row-btn" onclick="addExperience()">+ Add experience</button>
+
+      <div class="form-eyebrow">Education</div>
+      <div id="educationList"></div>
+      <button class="add-row-btn" onclick="addEducation()">+ Add education</button>
+
+      <div class="form-eyebrow">Skills</div>
+      <div class="field">
+        <input id="skillInput" placeholder="Type a skill and press Enter" onkeydown="handleSkillEnter(event)">
+        <div class="chips" id="skillChips"></div>
+      </div>
+
+      <div class="form-eyebrow">Certifications &amp; awards <span class="optional-tag">optional</span></div>
+      <div class="field"><textarea id="certs" placeholder="AWS Certified Developer, 2024" oninput="render()"></textarea></div>
+
+      <div class="ats-bar" id="atsBar" style="display:none;">
+        <div class="ats-score" id="atsScore">0%</div>
+        <div class="ats-label">ATS readiness — <span id="atsNote">fill in more fields</span></div>
+      </div>
+
+      <div class="paywall">
+        <strong>Your CV updates live as you type.</strong><br>
+        Download it as a PDF any time — completely free.
+      </div>
+
+      <div class="form-footer">
+        <button class="btn btn-ghost" onclick="goToStep1()">← Back</button>
+        <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
+      </div>
     </div>
-    <div class="panel-preview"><div class="sheet" id="sheetLive"><h1>Your Name</h1><p>Fill the form to see preview</p></div></div>
+
+    <div class="panel-preview">
+      <div class="sheet-frame">
+        <div class="preview-caption">Live preview</div>
+        <div class="sheet" id="sheetLive"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- COVER LETTER MODAL -->
+  <!-- Cover letter modal -->
   <div class="modal" id="coverLetterModal">
     <div class="modal-content">
-      <h3>AI Cover Letter Generator</h3>
-      <div class="field"><input id="companyName" placeholder="Company Name"></div>
-      <div class="field"><input id="jobTitle" placeholder="Job Title"></div>
-      <div id="generatedCL" style="border:1px solid #ccc; padding:15px; margin:15px 0; white-space:pre-line; max-height:300px; overflow:auto;"></div>
-      <button class="btn" onclick="generateCoverLetter()">Generate Letter</button>
-      <button class="btn" style="background:#fff; color:var(--ink);" onclick="closeModal()">Close</button>
+      <h3>AI cover letter generator</h3>
+      <div class="field"><label for="companyName">Company name</label><input id="companyName" placeholder="Acme Inc."></div>
+      <div class="field"><label for="jobTitle">Job title</label><input id="jobTitle" placeholder="Frontend Engineer"></div>
+      <button class="btn btn-primary" onclick="generateCoverLetter()">Generate letter</button>
+      <div id="generatedCL"></div>
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
     </div>
   </div>
+
 </div>
 
-<script>
-let track = null; let skills = []; let experiences = [{title:'', org:'', desc:''}];
-
-function selectTrack(t){ 
-  track = t; 
-  document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('selected')); 
-  event.currentTarget.classList.add('selected'); 
-  document.getElementById('continueBtn').disabled = false; 
-}
-
-function goToStep2(){ 
-  document.getElementById('step1').style.display = 'none'; 
-  document.getElementById('workspace').classList.add('active'); 
-}
-
-function addExperience(){ 
-  experiences.push({}); 
-  renderExperiences(); 
-}
-
-function renderExperiences(){
-  experienceList.innerHTML = experiences.map((exp, i) => `
-    <div class="repeat-block">
-      <input placeholder="Role" value="${exp.title||''}" oninput="experiences[${i}].title=this.value; render()">
-      <input placeholder="Company" value="${exp.org||''}" oninput="experiences[${i}].org=this.value; render()">
-      <textarea placeholder="What did you achieve?" oninput="experiences[${i}].desc=this.value; render()">${exp.desc||''}</textarea>
-    </div>
-  `).join('');
-}
-
-function handleSkillEnter(e){ 
-  if(e.key === 'Enter' && e.target.value.trim()){ 
-    skills.push(e.target.value.trim()); 
-    e.target.value = ''; 
-    renderSkills(); 
-    render(); 
-  } 
-}
-
-function renderSkills(){
-  skillChips.innerHTML = skills.map(s=>`<span style="background:#eee; padding:4px 10px; border-radius:20px;">${s}</span>`).join('');
-}
-
-function generateCoverLetter(){ 
-  const name = fullName.value || 'Your Name';
-  const company = companyName.value || 'the company';
-  const job = jobTitle.value || 'the role';
-  const cl = `Dear Hiring Manager at ${company},
-
-I am writing to apply for the ${job} position. As a ${roleTitle.value}, I have experience in ${skills.join(', ')}.
-
-${summary.value}
-
-I am excited about the opportunity to contribute to ${company}.
-
-Sincerely,
-${name}`;
-  document.getElementById('generatedCL').textContent = cl; 
-}
-
-function openModal(id){ document.getElementById(id+'Modal').style.display='flex'; }
-function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }
-
-function render(){ 
-  sheetLive.innerHTML = `
-    <h1>${fullName.value||'YOUR NAME'}</h1>
-    <p><b>${roleTitle.value}</b></p>
-    <p>${summary.value}</p>
-    <h3>Experience</h3>
-    ${experiences.map(e=>`<p><b>${e.title}</b> at ${e.org}<br>${e.desc}</p>`).join('')}
-  `; 
-}
-
-function downloadPDF(){ 
-  html2pdf().set({ margin: 0.5, filename: `CV-${fullName.value}.pdf`}).from(sheetLive).save(); 
-}
-
-renderExperiences();
-</script>
+<script src="templates.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
