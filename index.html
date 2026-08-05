@@ -95,7 +95,10 @@
 
       <div class="form-eyebrow">Skills</div>
       <div class="field">
-        <input id="skillInput" placeholder="Type a skill and press Enter" onkeydown="handleSkillEnter(event)">
+        <div class="skill-input-row">
+          <input id="skillInput" placeholder="Type a skill, then press Enter (or just click away)" onkeydown="handleSkillKeydown(event)" onblur="handleSkillBlur()">
+          <button type="button" class="skill-add-btn" onmousedown="event.preventDefault()" onclick="addSkillFromInput()">+ Add</button>
+        </div>
         <div class="chips" id="skillChips"></div>
       </div>
 
