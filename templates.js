@@ -159,5 +159,3 @@ ${d.cabinTraining ?
 `;
 
 },
-
-corporate: (d) => {
