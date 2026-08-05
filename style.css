@@ -12,9 +12,9 @@
   --gold:#a5761e;
   --gold-tint:#f6efdd;
   --radius:2px;
-  --font-display:'Fraunces', serif;
-  --font-body:'IBM Plex Sans', sans-serif;
-  --font-mono:'IBM Plex Mono', monospace;
+  --font-display:'Arial','Calibri','sans-serif';
+  --font-body:'Arial','Calibri','sans-serif';
+  --font-mono:'Courier New', monospace;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
