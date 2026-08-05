@@ -8,7 +8,23 @@ let experiences = [{ role: '', company: '', dates: '', desc: '' }];
 let educations = [{ degree: '', school: '', year: '' }];
 
 const TRACK_LABELS = { tech: 'Tech / CS', cabin: 'Cabin Crew', corporate: 'Banking / Corporate' };
-const FIELD_IDS = ['fullName', 'roleTitle', 'email', 'phone', 'location', 'linkedin', 'summary', 'certs', 'languages'];
+const FIELD_IDS = [
+  'fullName',
+  'roleTitle',
+  'email',
+  'phone',
+  'location',
+  'linkedin',
+  'summary',
+  'certs',
+  'age',
+  'nationality',
+  'height',
+  'armReach',
+  'swimming',
+  'languages',
+  'cabinTraining'
+];
 
 // Multiple saved CVs live under one registry key so we don't scatter localStorage keys.
 // Shape: { activeId: 'cv_123', cvs: { cv_123: { id, name, savedAt, track, photoData, skills, experiences, educations, fields } } }
@@ -67,7 +83,31 @@ function switchProfile(t) {
   renderProfileSwitcher();
   render();
 }
+function updateCabinFields() {
 
+  const show = track === "cabin";
+
+  document.querySelectorAll(".cabin-only").forEach(el => {
+    el.style.display = show ? "" : "none";
+  });
+
+  const summaryHeading = document.getElementById("summaryHeading");
+
+  if(summaryHeading){
+    summaryHeading.textContent =
+      show ? "Professional Profile" : "Summary";
+  }
+
+  const expHeading = document.getElementById("experienceHeading");
+
+  if(expHeading){
+    expHeading.textContent =
+      show
+      ? "Customer Service Experience"
+      : "Professional Experience";
+  }
+
+}
 /* ---------- Photo ---------- */
 
 function handlePhoto(e) {
