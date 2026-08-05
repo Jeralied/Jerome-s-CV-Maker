@@ -184,6 +184,7 @@ function renderSkillChips() {
 
 /* ---------- Collect + render ---------- */
 
+
 function collectData() {
   const expStr = experiences
    .filter(e => e.role || e.company)
@@ -212,21 +213,12 @@ function collectData() {
     experience: expStr,
     education: eduStr,
     certs: esc(document.getElementById('certs').value),
-    languages: esc(document.getElementById('languages').value),
-    photo: photoData
-    age: esc(document.getElementById('age').value),
+    photo: photoData,  // <- ADDED COMMA HERE
     
+    // cabin fields
+    age: esc(document.getElementById('age').value),
     nationality: esc(document.getElementById('nationality').value),
-
-height: esc(document.getElementById('height').value),
-
-armReach: esc(document.getElementById('armReach').value),
-
-swimming: esc(document.getElementById('swimming').value),
-
-languages: esc(document.getElementById('languages').value),
-
-cabinTraining: esc(document.getElementById('cabinTraining').value),
+    height: esc(document.getElementById('height').value),
   };
 }
 
