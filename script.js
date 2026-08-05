@@ -8,7 +8,7 @@ let experiences = [{ role: '', company: '', dates: '', desc: '' }];
 let educations = [{ degree: '', school: '', year: '' }];
 
 const TRACK_LABELS = { tech: 'Tech / CS', cabin: 'Cabin Crew', corporate: 'Banking / Corporate' };
-const FIELD_IDS = ['fullName', 'roleTitle', 'email', 'phone', 'location', 'linkedin', 'summary', 'certs'];
+const FIELD_IDS = ['fullName', 'roleTitle', 'email', 'phone', 'location', 'linkedin', 'summary', 'certs', 'languages'];
 
 // Multiple saved CVs live under one registry key so we don't scatter localStorage keys.
 // Shape: { activeId: 'cv_123', cvs: { cv_123: { id, name, savedAt, track, photoData, skills, experiences, educations, fields } } }
@@ -38,6 +38,7 @@ function goToStep2() {
   document.getElementById('step1').style.display = 'none';
   document.getElementById('workspace').classList.add('active');
   document.getElementById('photoField').style.display = track === 'cabin' ? 'block' : 'none';
+  document.getElementById('languagesField').style.display = track === 'cabin' ? 'block' : 'none';
   document.getElementById('atsBar').style.display = track === 'tech' ? 'flex' : 'none';
   renderProfileSwitcher();
   renderCvSwitcher();
@@ -61,6 +62,7 @@ function renderProfileSwitcher() {
 function switchProfile(t) {
   track = t;
   document.getElementById('photoField').style.display = track === 'cabin' ? 'block' : 'none';
+  document.getElementById('languagesField').style.display = track === 'cabin' ? 'block' : 'none';
   document.getElementById('atsBar').style.display = track === 'tech' ? 'flex' : 'none';
   renderProfileSwitcher();
   render();
@@ -159,6 +161,7 @@ function collectData() {
     experience: expStr,
     education: eduStr,
     certs: esc(document.getElementById('certs').value),
+    languages: esc(document.getElementById('languages').value),
     photo: photoData
   };
 }
@@ -244,6 +247,7 @@ function applyCvSnapshot(cv) {
   document.getElementById('step1').style.display = 'none';
   document.getElementById('workspace').classList.add('active');
   document.getElementById('photoField').style.display = track === 'cabin' ? 'block' : 'none';
+  document.getElementById('languagesField').style.display = track === 'cabin' ? 'block' : 'none';
   document.getElementById('atsBar').style.display = track === 'tech' ? 'flex' : 'none';
 
   FIELD_IDS.forEach(id => {
