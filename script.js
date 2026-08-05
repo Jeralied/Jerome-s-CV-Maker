@@ -57,6 +57,7 @@ function goToStep2() {
   document.getElementById('languagesField').style.display = track === 'cabin'? 'block' : 'none';
   document.getElementById('atsBar').style.display = track === 'tech'? 'flex' : 'none';
   renderProfileSwitcher();
+  updateCabinFields();
   renderCvSwitcher();
   renderRepeaters();
   renderSkillChips();
@@ -81,6 +82,7 @@ function switchProfile(t) {
   document.getElementById('languagesField').style.display = track === 'cabin'? 'block' : 'none';
   document.getElementById('atsBar').style.display = track === 'tech'? 'flex' : 'none';
   renderProfileSwitcher();
+  updateCabinFields();
   render();
 }
 function updateCabinFields() {
@@ -212,6 +214,19 @@ function collectData() {
     certs: esc(document.getElementById('certs').value),
     languages: esc(document.getElementById('languages').value),
     photo: photoData
+    age: esc(document.getElementById('age').value),
+    
+    nationality: esc(document.getElementById('nationality').value),
+
+height: esc(document.getElementById('height').value),
+
+armReach: esc(document.getElementById('armReach').value),
+
+swimming: esc(document.getElementById('swimming').value),
+
+languages: esc(document.getElementById('languages').value),
+
+cabinTraining: esc(document.getElementById('cabinTraining').value),
   };
 }
 
@@ -313,6 +328,7 @@ function applyCvSnapshot(cv) {
   document.getElementById('continueBtn').disabled =!track;
 
   renderProfileSwitcher();
+  updateCabinFields();
   renderCvSwitcher();
   renderRepeaters();
   renderSkillChips();
@@ -457,6 +473,7 @@ function restoreOnLoad() {
   currentCvId = makeCvId();
   renderRepeaters();
   renderCvSwitcher();
+  updateCabinFields();
 }
 
 /* ---------- ATS readiness (tech track) ---------- */
