@@ -8,8 +8,13 @@ let experiences = [{ role: '', company: '', dates: '', desc: '' }];
 let educations = [{ degree: '', school: '', year: '' }];
 
 const TRACK_LABELS = { tech: 'Tech / CS', cabin: 'Cabin Crew', corporate: 'Banking / Corporate' };
-const STORAGE_KEY = 'jeromecv:draft';
 const FIELD_IDS = ['fullName', 'roleTitle', 'email', 'phone', 'location', 'linkedin', 'summary', 'certs'];
+
+// Multiple saved CVs live under one registry key so we don't scatter localStorage keys.
+// Shape: { activeId: 'cv_123', cvs: { cv_123: { id, name, savedAt, track, photoData, skills, experiences, educations, fields } } }
+const REGISTRY_KEY = 'jeromecv:registry';
+let currentCvId = null;
+let currentCvName = 'Untitled CV';
 
 function esc(s) {
   return (s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -27,11 +32,13 @@ function selectTrack(t, evt) {
 
 function goToStep2() {
   if (!track) return;
+  if (!currentCvId) currentCvId = makeCvId();
   document.getElementById('step1').style.display = 'none';
   document.getElementById('workspace').classList.add('active');
   document.getElementById('photoField').style.display = track === 'cabin' ? 'block' : 'none';
   document.getElementById('atsBar').style.display = track === 'tech' ? 'flex' : 'none';
   renderProfileSwitcher();
+  renderCvSwitcher();
   renderRepeaters();
   renderSkillChips();
   render();
@@ -164,49 +171,46 @@ function render() {
   const downloadBtn = document.getElementById('downloadBtn');
   if (downloadBtn) downloadBtn.disabled = !document.getElementById('fullName').value.trim();
 
-  saveDraft();
+  saveActiveCv();
 }
 
-/* ---------- Autosave (localStorage) ---------- */
+/* ---------- Saved CVs (localStorage registry) ---------- */
 /* Falls back to no-op silently if storage is unavailable (private browsing, quota, etc). */
 
-function saveDraft() {
+function loadRegistry() {
   try {
-    const payload = { track, photoData, skills, experiences, educations, fields: {} };
-    FIELD_IDS.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) payload.fields[id] = el.value;
-    });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-  } catch (err) { /* ignore */ }
+    const raw = localStorage.getItem(REGISTRY_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    return (parsed && parsed.cvs) ? parsed : { activeId: null, cvs: {} };
+  } catch (err) { return { activeId: null, cvs: {} }; }
 }
 
-function loadDraft() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (err) { return null; }
+function saveRegistry(reg) {
+  try { localStorage.setItem(REGISTRY_KEY, JSON.stringify(reg)); } catch (err) { /* ignore */ }
 }
 
-function clearDraft() {
-  try { localStorage.removeItem(STORAGE_KEY); } catch (err) { /* ignore */ }
+function snapshotCurrentCv() {
+  const fields = {};
+  FIELD_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) fields[id] = el.value;
+  });
+  return {
+    id: currentCvId,
+    name: currentCvName,
+    savedAt: Date.now(),
+    track, photoData, skills, experiences, educations, fields
+  };
 }
 
-function startOver() {
-  if (!confirm('Clear everything you\u2019ve entered and start a new CV?')) return;
-  clearDraft();
-  location.reload();
-}
-
-function restoreDraft() {
-  const draft = loadDraft();
-  if (!draft || !draft.track) { renderRepeaters(); return; }
-
-  track = draft.track;
-  photoData = draft.photoData || null;
-  skills = draft.skills || [];
-  experiences = (draft.experiences && draft.experiences.length) ? draft.experiences : experiences;
-  educations = (draft.educations && draft.educations.length) ? draft.educations : educations;
+function applyCvSnapshot(cv) {
+  track = cv.track || null;
+  photoData = cv.photoData || null;
+  skills = cv.skills || [];
+  experiences = (cv.experiences && cv.experiences.length) ? cv.experiences : [{ role: '', company: '', dates: '', desc: '' }];
+  educations = (cv.educations && cv.educations.length) ? cv.educations : [{ degree: '', school: '', year: '' }];
+  currentCvId = cv.id;
+  currentCvName = cv.name || 'Untitled CV';
 
   document.getElementById('step1').style.display = 'none';
   document.getElementById('workspace').classList.add('active');
@@ -215,19 +219,156 @@ function restoreDraft() {
 
   FIELD_IDS.forEach(id => {
     const el = document.getElementById(id);
-    if (el && draft.fields && draft.fields[id] !== undefined) el.value = draft.fields[id];
+    if (el) el.value = (cv.fields && cv.fields[id] !== undefined) ? cv.fields[id] : '';
   });
-  if (photoData) {
-    document.getElementById('photoPreview').innerHTML = `<img src="${photoData}" alt="">`;
-  }
+  document.getElementById('photoPreview').innerHTML = photoData ? `<img src="${photoData}" alt="">` : 'No photo';
+
+  document.querySelectorAll('.track-card').forEach(c => c.classList.remove('selected'));
   const card = document.querySelector(`.track-card[data-track="${track}"]`);
   if (card) card.classList.add('selected');
-  document.getElementById('continueBtn').disabled = false;
+  document.getElementById('continueBtn').disabled = !track;
 
   renderProfileSwitcher();
+  renderCvSwitcher();
   renderRepeaters();
   renderSkillChips();
   render();
+}
+
+function saveActiveCv() {
+  if (!currentCvId) return; // nothing to save into yet (still on step 1)
+  const reg = loadRegistry();
+  reg.cvs[currentCvId] = snapshotCurrentCv();
+  reg.activeId = currentCvId;
+  saveRegistry(reg);
+  renderCvSwitcher();
+}
+
+function makeCvId() { return 'cv_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7); }
+
+function startNewCv() {
+  currentCvId = makeCvId();
+  currentCvName = 'Untitled CV';
+  track = null;
+  photoData = null;
+  skills = [];
+  experiences = [{ role: '', company: '', dates: '', desc: '' }];
+  educations = [{ degree: '', school: '', year: '' }];
+
+  FIELD_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('photoPreview').innerHTML = 'No photo';
+  document.querySelectorAll('.track-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('continueBtn').disabled = true;
+  document.getElementById('profileSwitcher').innerHTML = '';
+
+  document.getElementById('step1').style.display = 'block';
+  document.getElementById('workspace').classList.remove('active');
+  renderCvSwitcher();
+}
+
+function openSavedCv(id) {
+  const reg = loadRegistry();
+  const cv = reg.cvs[id];
+  if (!cv) return;
+  reg.activeId = id;
+  saveRegistry(reg);
+  applyCvSnapshot(cv);
+}
+
+function renameCurrentCv() {
+  if (!currentCvId) return;
+  const next = prompt('Name this CV:', currentCvName);
+  if (next === null) return;
+  currentCvName = next.trim() || 'Untitled CV';
+  saveActiveCv();
+}
+
+function deleteCv(id, evt) {
+  if (evt) evt.stopPropagation();
+  const reg = loadRegistry();
+  const cv = reg.cvs[id];
+  if (!cv) return;
+  if (!confirm(`Delete "${cv.name}"? This can't be undone.`)) return;
+
+  delete reg.cvs[id];
+  const remainingIds = Object.keys(reg.cvs);
+
+  if (id === currentCvId) {
+    if (remainingIds.length) {
+      const nextId = remainingIds.sort((a, b) => reg.cvs[b].savedAt - reg.cvs[a].savedAt)[0];
+      reg.activeId = nextId;
+      saveRegistry(reg);
+      applyCvSnapshot(reg.cvs[nextId]);
+      return;
+    }
+    reg.activeId = null;
+    saveRegistry(reg);
+    startNewCv();
+    return;
+  }
+
+  saveRegistry(reg);
+  renderCvSwitcher();
+}
+
+function renderCvSwitcher() {
+  const el = document.getElementById('cvSwitcher');
+  if (!el) return;
+  const reg = loadRegistry();
+  const ids = Object.keys(reg.cvs).sort((a, b) => reg.cvs[b].savedAt - reg.cvs[a].savedAt);
+
+  const list = ids.map(id => {
+    const cv = reg.cvs[id];
+    const active = id === currentCvId;
+    const label = TRACK_LABELS[cv.track] || 'No track yet';
+    return `
+      <button class="cv-switcher-item ${active ? 'active' : ''}" onclick="openSavedCv('${id}')">
+        <span class="cv-switcher-name">${esc(cv.name)}</span>
+        <span class="cv-switcher-track">${label}</span>
+        <span class="cv-switcher-delete" onclick="deleteCv('${id}', event)" aria-label="Delete ${esc(cv.name)}" role="button">×</span>
+      </button>`;
+  }).join('');
+
+  el.innerHTML = `
+    <button class="cv-switcher-toggle" onclick="toggleCvMenu()">
+      <span>${esc(currentCvName)}</span> ▾
+    </button>
+    <div class="cv-switcher-menu" id="cvSwitcherMenu">
+      ${list || '<div class="cv-switcher-empty">No saved CVs yet</div>'}
+      <button class="cv-switcher-new" onclick="startNewCv()">+ New CV</button>
+      <button class="cv-switcher-rename" onclick="renameCurrentCv()">Rename current</button>
+    </div>`;
+}
+
+function toggleCvMenu() {
+  const menu = document.getElementById('cvSwitcherMenu');
+  if (menu) menu.classList.toggle('open');
+}
+
+document.addEventListener('click', (e) => {
+  const switcher = document.getElementById('cvSwitcher');
+  const menu = document.getElementById('cvSwitcherMenu');
+  if (switcher && menu && !switcher.contains(e.target)) menu.classList.remove('open');
+});
+
+function restoreOnLoad() {
+  const reg = loadRegistry();
+  const ids = Object.keys(reg.cvs);
+
+  if (reg.activeId && reg.cvs[reg.activeId]) {
+    currentCvId = reg.activeId;
+    applyCvSnapshot(reg.cvs[reg.activeId]);
+    return;
+  }
+  if (ids.length) {
+    const latest = ids.sort((a, b) => reg.cvs[b].savedAt - reg.cvs[a].savedAt)[0];
+    applyCvSnapshot(reg.cvs[latest]);
+    return;
+  }
+  // brand new visitor — nothing saved yet, start on step 1 with a fresh id ready
+  currentCvId = makeCvId();
+  renderRepeaters();
+  renderCvSwitcher();
 }
 
 /* ---------- ATS readiness (tech track) ---------- */
@@ -296,4 +437,4 @@ ${name}`;
   document.getElementById('generatedCL').textContent = letter;
 }
 
-restoreDraft();
+restoreOnLoad();
