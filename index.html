@@ -68,49 +68,27 @@
         <div class="field"><label for="location">Location</label><input id="location" placeholder="Accra, Ghana" oninput="render()"></div>
         <div class="field"><label for="linkedin">LinkedIn / portfolio</label><input id="linkedin" placeholder="linkedin.com/in/jerome" oninput="render()"></div>
       </div>
-      <div class="form-eyebrow cabin-only">Cabin Crew Information</div>
 
-<div class="row2 cabin-only">
-  <div class="field">
-    <label for="age">Age</label>
-    <input id="age" type="number" placeholder="23" oninput="render()">
-  </div>
-
-  <div class="field">
-    <label for="nationality">Nationality</label>
-    <input id="nationality" placeholder="Ghanaian" oninput="render()">
-  </div>
-</div>
-
-<div class="row2 cabin-only">
-  <div class="field">
-    <label for="height">Height (cm)</label>
-    <input id="height" placeholder="172" oninput="render()">
-  </div>
-
-  <div class="field">
-    <label for="armReach">Arm Reach (cm)</label>
-    <input id="armReach" placeholder="212" oninput="render()">
-  </div>
-</div>
-
-<div class="row2 cabin-only">
-  <div class="field">
-    <label for="swimming">Swimming Ability</label>
-    <select id="swimming" oninput="render()">
-      <option value="">Select</option>
-      <option>Yes</option>
-      <option>No</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label for="languages">Languages</label>
-    <input id="languages"
-           placeholder="English, Twi"
-           oninput="render()">
-  </div>
-</div>
+      <div class="form-eyebrow cabin-only">Cabin crew information</div>
+      <div class="row2 cabin-only">
+        <div class="field"><label for="age">Age</label><input id="age" type="number" placeholder="23" oninput="render()"></div>
+        <div class="field"><label for="nationality">Nationality</label><input id="nationality" placeholder="Ghanaian" oninput="render()"></div>
+      </div>
+      <div class="row2 cabin-only">
+        <div class="field"><label for="height">Height (cm)</label><input id="height" type="number" placeholder="172" oninput="render()"></div>
+        <div class="field"><label for="armReach">Arm reach (cm)</label><input id="armReach" type="number" placeholder="212" oninput="render()"></div>
+      </div>
+      <div class="row2 cabin-only">
+        <div class="field">
+          <label for="swimming">Swimming ability</label>
+          <select id="swimming" onchange="render()">
+            <option value="">Select</option>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </div>
+        <div class="field"><label for="languages">Languages</label><input id="languages" placeholder="English, Twi" oninput="render()"></div>
+      </div>
 
       <div class="field" id="photoField" style="display:none;">
         <label>Photo</label>
@@ -120,20 +98,10 @@
         </div>
       </div>
 
-      <div class="field" id="languagesField" style="display:none;">
-        <label for="languages">Languages</label>
-        <input id="languages" placeholder="English - Fluent, French - Basic" oninput="render()">
-      </div>
-
-      <div class="form-eyebrow" id="summaryHeading">
-Professional Profile
-</div>
+      <div class="form-eyebrow" id="summaryHeading">Summary</div>
       <div class="field"><textarea id="summary" placeholder="Two or three sentences on what you do and the value you bring." oninput="render()"></textarea></div>
 
-      <div class="form-eyebrow"
-id="experienceHeading">
-Professional Experience
-</div>
+      <div class="form-eyebrow" id="experienceHeading">Experience</div>
       <div id="experienceList"></div>
       <button class="add-row-btn" onclick="addExperience()">+ Add experience</button>
 
@@ -152,6 +120,9 @@ Professional Experience
 
       <div class="form-eyebrow">Certifications &amp; awards <span class="optional-tag">optional</span></div>
       <div class="field"><textarea id="certs" placeholder="AWS Certified Developer, 2024" oninput="render()"></textarea></div>
+
+      <div class="form-eyebrow cabin-only">Cabin crew qualifications</div>
+      <div class="field cabin-only"><textarea id="cabinTraining" placeholder="First Aid, Customer Service, Safety Training..." oninput="render()"></textarea></div>
 
       <div class="form-eyebrow">Formatting</div>
       <div class="row2">
@@ -174,16 +145,6 @@ Professional Experience
           </select>
         </div>
       </div>
-      <div class="form-eyebrow cabin-only">
-Cabin Crew Qualifications
-</div>
-
-<div class="field cabin-only">
-<textarea
-id="cabinTraining"
-placeholder="First Aid, Customer Service, Safety Training..."
-oninput="render()"></textarea>
-</div>
 
       <div class="ats-bar" id="atsBar" style="display:none;">
         <div class="ats-score" id="atsScore">0%</div>
