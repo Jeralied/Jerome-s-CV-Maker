@@ -256,7 +256,7 @@ body{
 .cv h2{margin:0; font-weight:500;}
 .cv .section{margin-top:16px; break-inside:avoid; page-break-inside:avoid;}
 .exp-block{break-inside:avoid; page-break-inside:avoid;}
-.header-tech, .header-cabin, .header-corporate{break-after:avoid; page-break-after:avoid;}
+.header-tech, .header-cabin, .header-corporate, .header-cabin-emirates{break-after:avoid; page-break-after:avoid;}
 .cv .section h3{
   font-family:var(--font-mono); font-size:calc(10.5px * var(--cv-scale, 1)); letter-spacing:0.08em; text-transform:uppercase;
   margin:0 0 8px; padding-bottom:5px; border-bottom:1px solid var(--paper-line);
@@ -279,13 +279,13 @@ body{
   font-size:calc(10.5px * var(--cv-scale, 1)); font-weight:600; padding:4px 9px; border-radius:2px;
 }
 
-/* Cabin */
+/* Cabin (legacy layout — kept in case it's reused; the live cabin template
+   now uses .cv-cabin-emirates below) */
 .header-cabin{display:flex; gap:16px; align-items:flex-start;}
 .photo-border{
   width:76px; height:76px; border-radius:50%; object-fit:cover; flex-shrink:0;
   border:3px solid var(--gold-tint); background:var(--paper-dim);
 }
-.photo-placeholder{display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:8px; color:var(--slate-faint); text-align:center;}
 .header-info h1{font-family:var(--font-display); font-style:italic; font-size:calc(22px * var(--cv-scale, 1));}
 .header-info h2{font-size:calc(11px * var(--cv-scale, 1)); color:var(--gold); text-transform:uppercase; letter-spacing:0.05em; font-weight:600; margin-top:4px;}
 .header-info p{font-size:calc(10.5px * var(--cv-scale, 1)); color:var(--slate-soft); margin:6px 0 0;}
@@ -294,9 +294,9 @@ body{
 
 /* Corporate */
 .header-corporate{text-align:center; border-bottom:2px solid var(--ink); padding-bottom:14px;}
-.header-corporate h1{font-weight:700; text-transform:uppercase; letter-spacing:0.05em; font-size:18px;}
-.header-corporate h2{font-size:11px; letter-spacing:0.06em; color:var(--slate-soft); text-transform:uppercase; font-weight:500; margin-top:4px;}
-.contact-line{font-size:10.5px; color:var(--slate-soft); margin-top:8px;}
+.header-corporate h1{font-weight:700; text-transform:uppercase; letter-spacing:0.05em; font-size:calc(18px * var(--cv-scale, 1));}
+.header-corporate h2{font-size:calc(11px * var(--cv-scale, 1)); letter-spacing:0.06em; color:var(--slate-soft); text-transform:uppercase; font-weight:500; margin-top:4px;}
+.contact-line{font-size:calc(10.5px * var(--cv-scale, 1)); color:var(--slate-soft); margin-top:8px;}
 .cv-corporate .section h3{border-bottom:2px solid var(--ink); font-weight:700; letter-spacing:0.06em;}
 .cv-corporate .two-col{margin-top:14px;}
 
@@ -332,17 +332,27 @@ body{
   #sheetLive, #sheetLive *{visibility:visible;}
   #sheetLive{position:absolute; left:0; top:0; width:100%; box-shadow:none; padding:20mm;}
 }
-/* EMIRATES CABIN STYLE */
-.cv-cabin-emirates{display:grid; grid-template-columns: 1.2fr 0.8fr; gap:24px; background:#000; color:#fff; padding:0;}
-.cv-cabin-emirates .header-cabin-emirates{display:contents;}
-.cv-cabin-emirates .header-left{grid-column:1; background:#fff; color:#000; padding:30px;}
-.cv-cabin-emirates .header-right{grid-column:2; background:#000; padding:0;}
+
+/* ---------- Emirates-style cabin crew layout ----------
+   Deliberately built with flexbox, not CSS Grid: html2canvas (used for the
+   PDF export) does not render CSS Grid reliably — grid tracks and
+   `display:contents` children were the exact cause of the earlier
+   "blank column" PDF bug, so this layout avoids both. */
+.cv-cabin-emirates{background:#000; color:#fff; padding:0; display:block;}
+.header-cabin-emirates{display:flex; align-items:stretch;}
+.header-cabin-emirates .header-left{flex:1.2; background:#fff; color:#000; padding:30px;}
+.header-cabin-emirates .header-right{flex:0.8; background:#000;}
 .passport-photo{width:100%; height:100%; object-fit:cover; display:block; aspect-ratio:3/4;}
-.photo-placeholder{background:#333; color:#999; display:flex; align-items:center; justify-content:center; font-size:10px;}
-.cv-cabin-emirates h1{font-family:'Fraunces', serif; font-size:28px; margin:0; color:#000;}
-.cv-cabin-emirates h2{font-size:14px; letter-spacing:2px; color:#a5761e; margin:4px 0 8px; font-weight:600;}
-.contact-line{font-size:10px; color:#555;}
-.personal-line{grid-column:1 / -1; background:#fff; color:#000; padding:0 30px 10px; font-size:10px; font-weight:500;}
-.cv-cabin-emirates .section{background:#fff; color:#000; padding:0 30px 20px; grid-column:1;}
-.cv-cabin-emirates .section h3{font-size:11px; letter-spacing:1px; color:#a5761e; border-bottom:1px solid #eee; padding-bottom:4px; margin-bottom:8px;}
-.cv-cabin-emirates .plain-skills{list-style:disc; padding-left:16px; margin:0; font-size:11px;}
+.cv-cabin-emirates .photo-placeholder{background:#333; color:#999; display:flex; align-items:center; justify-content:center; font-size:10px;}
+.cv-cabin-emirates h1{font-family:var(--font-display); font-size:calc(28px * var(--cv-scale, 1)); margin:0; color:#000;}
+.cv-cabin-emirates h2{font-size:calc(14px * var(--cv-scale, 1)); letter-spacing:2px; color:var(--gold); margin:4px 0 8px; font-weight:600;}
+.cv-cabin-emirates .contact-line{font-size:calc(10px * var(--cv-scale, 1)); color:#555; margin-top:0;}
+.cv-cabin-emirates .personal-line{
+  background:#fff; color:#000; padding:0 30px 10px; font-size:calc(10px * var(--cv-scale, 1)); font-weight:500;
+}
+.cv-cabin-emirates .section{background:#fff; color:#000; padding:0 30px 20px;}
+.cv-cabin-emirates .section h3{
+  font-size:calc(11px * var(--cv-scale, 1)); letter-spacing:1px; color:var(--gold);
+  border-bottom:1px solid #eee; padding-bottom:4px; margin-bottom:8px;
+}
+.cv-cabin-emirates .plain-skills{list-style:disc; padding-left:16px; margin:0; font-size:calc(11px * var(--cv-scale, 1));}
