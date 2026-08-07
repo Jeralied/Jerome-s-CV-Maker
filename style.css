@@ -128,13 +128,32 @@ body{
 .track-card h3{font-family:var(--font-display); font-size:19px; margin:0 0 6px; color:var(--ink);}
 .track-card p{font-size:13px; line-height:1.5; color:var(--slate-soft); margin:0;}
 
-.track-card[data-track="tech"] .swatch, .track-card[data-track="tech"] .ticon{color:var(--green); background:var(--green);}
-.track-card[data-track="tech"].selected{border:2px solid var(--green);}
-.track-card[data-track="cabin"] .swatch, .track-card[data-track="cabin"] .ticon{color:var(--gold); background:var(--gold);}
-.track-card[data-track="cabin"].selected{border:2px solid var(--gold);}
-.track-card[data-track="corporate"] .swatch, .track-card[data-track="corporate"] .ticon{color:var(--ink); background:var(--ink);}
-.track-card[data-track="corporate"].selected{border:2px solid var(--ink);}
+.track-card[data-track="tech"] .swatch{
+  background:var(--green);
+}
 
+.track-card[data-track="tech"] .ticon{
+  color:var(--green);
+  background:transparent;
+}
+
+.track-card[data-track="cabin"] .swatch{
+  background:var(--gold);
+}
+
+.track-card[data-track="cabin"] .ticon{
+  color:var(--gold);
+  background:transparent;
+}
+
+.track-card[data-track="corporate"] .swatch{
+  background:var(--ink);
+}
+
+.track-card[data-track="corporate"] .ticon{
+  color:var(--ink);
+  background:transparent;
+}
 .hero-actions{padding:0 20px 50px; display:flex; justify-content:center;}
 
 /* ---------- Buttons ---------- */
