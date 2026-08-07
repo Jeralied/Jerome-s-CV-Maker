@@ -421,6 +421,143 @@ body{
 .two-col{display:flex; gap:20px;}
 .two-col > div, .two-col > .section{flex:1; min-width:0;}
 
+/* ---------- Experience / education rendering ---------- */
+
+.experience-item{
+  margin-bottom:14px;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+
+.experience-item:last-child{
+  margin-bottom:0;
+}
+
+.experience-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+
+.experience-top strong{
+  font-weight:700;
+}
+
+.experience-top span{
+  flex-shrink:0;
+  color:var(--slate-soft);
+  font-family:var(--font-mono);
+  font-size:0.88em;
+}
+
+.experience-company{
+  margin-top:2px;
+  color:var(--slate-soft);
+  font-weight:600;
+}
+
+.experience-bullets{
+  margin:5px 0 0;
+  padding-left:18px;
+}
+
+.experience-bullets li{
+  margin:2px 0;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+
+.education-item{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px 10px;
+  margin-bottom:7px;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+
+.education-item strong{
+  font-weight:700;
+}
+
+.education-item span{
+  color:var(--slate-soft);
+}
+
+.education-item span:last-child{
+  font-family:var(--font-mono);
+  font-size:0.9em;
+}
+
+/* ---------- Cabin readiness ---------- */
+
+.cabin-readiness-score{
+  color:var(--gold);
+}
+
+/* ---------- Cabin experience ---------- */
+
+.cv-cabin-premium .experience-item{
+  margin-bottom:14px;
+}
+
+.cv-cabin-premium .experience-top span{
+  color:#666;
+}
+
+.cv-cabin-premium .experience-company{
+  color:#555;
+}
+
+.cv-cabin-premium .experience-bullets{
+  color:#222;
+}
+
+.cv-cabin-premium .education-item{
+  color:#000;
+}
+
+.cv-cabin-premium .education-item span{
+  color:#555;
+}
+
+/* ---------- Corporate experience ---------- */
+
+.cv-corporate .experience-item{
+  margin-bottom:15px;
+}
+
+.cv-corporate .experience-top{
+  border-bottom:0;
+}
+
+.cv-corporate .experience-company{
+  color:#555;
+}
+
+/* ---------- Better PDF/page breaking ---------- */
+
+.section{
+  break-inside:auto;
+  page-break-inside:auto;
+}
+
+.experience-item,
+.education-item,
+.skills-grid{
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+
+@media print{
+  .experience-item,
+  .education-item{
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+}
+
 /* Tech */
 .cv-tech{font-family:var(--font-mono);}
 .header-tech{border-bottom:2px solid var(--ink); padding-bottom:10px;}
