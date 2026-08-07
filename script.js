@@ -471,6 +471,16 @@ function updateATS(data) {
   document.getElementById('atsNote').textContent = note;
 }
 
+function updateCabinEligibility(data);
+const checks = {
+  age: Number(data.age) >= 21,
+  height: Number(data.height) >= 160,
+  reach: Number(data.armReach) >= 212,
+  english: /english/i.test(data.languages),
+  experience: experiences.some(e => e.company && e.dates && e.desc),
+  education: educations.some(e => e.degree || e.school)
+};
+
 /* ---------- PDF download ---------- */
 
 function downloadPDF() {
