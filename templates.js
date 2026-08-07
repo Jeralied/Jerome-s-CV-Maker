@@ -21,7 +21,30 @@ const TEMPLATES = {
       </div>
       ${d.summary ? `<div class="section"><h3>Summary</h3><p>${d.summary}</p></div>` : ''}
       ${skillChips ? `<div class="section"><h3>Technical skills</h3><div class="skills-grid">${skillChips}</div></div>` : ''}
-      ${d.experience ? `<div class="section"><h3>Experience</h3><div class="exp-block">${d.experience}</div></div>` : ''}
+     ${d.experience?.length ? `
+  <div class="section">
+    <h3>Customer Service Experience</h3>
+    ${d.experience.map(exp => `
+      <div class="experience-item">
+        <div class="experience-top">
+          <strong>${exp.role}</strong>
+          <span>${exp.dates}</span>
+        </div>
+        <div class="experience-company">${exp.company}</div>
+        ${exp.desc ? `
+          <ul>
+            ${exp.desc
+              .split(/\r?\n/)
+              .map(line => line.trim())
+              .filter(Boolean)
+              .map(line => `<li>${line.replace(/^[-•]\s*/, '')}</li>`)
+              .join('')}
+          </ul>
+        ` : ''}
+      </div>
+    `).join('')}
+  </div>
+` : ''}
       ${d.education ? `<div class="section"><h3>Education</h3><div class="exp-block">${d.education}</div></div>` : ''}
       ${d.certs ? `<div class="section"><h3>Certifications</h3><p>${d.certs}</p></div>` : ''}
     </div>`;
