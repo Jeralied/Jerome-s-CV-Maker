@@ -471,6 +471,7 @@ function updateATS(data) {
   document.getElementById('atsNote').textContent = note;
 }
 
+/* ---------- ATS readiness (CabinCrew track) ---------- */
 function updateCabinEligibility(data);
 const checks = {
   age: Number(data.age) >= 21,
@@ -479,6 +480,10 @@ const checks = {
   english: /english/i.test(data.languages),
   experience: experiences.some(e => e.company && e.dates && e.desc),
   education: educations.some(e => e.degree || e.school)
+
+  const note = score >= 80 ? 'looking strong' : score >= 50 ? 'add a bit more detail' : 'keep filling in the sections above';
+  document.getElementById('cabincrewreadiness').textContent = readiness + '%';
+  document.getElementById('cabincrewNote').textContent = note;
 };
 
 /* ---------- PDF download ---------- */
@@ -515,7 +520,6 @@ function downloadPDF() {
   };
 
   html2pdf().set({
-    margin: 0.4,
     filename: `CV-${name}-${track}.pdf`,
     html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: window.innerWidth },
     jsPDF: { unit: 'in', format: 'a4' },
