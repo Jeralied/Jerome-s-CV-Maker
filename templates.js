@@ -38,12 +38,10 @@ const TEMPLATES = {
     const contact = [d.email, d.phone, d.location].filter(Boolean).join(' • ');
 
     const personal = [
-      d.age ? `Age: ${d.age}` : '',
-      d.nationality ? `Nationality: ${d.nationality}` : '',
-      d.height ? `Height: ${d.height} cm` : '',
-      d.armReach ? `Arm Reach: ${d.armReach} cm` : '',
-      d.swimming ? `Swimming: ${d.swimming}` : ''
-    ].filter(Boolean).join(' • ');
+  d.nationality ? `Nationality: ${d.nationality}` : '',
+  d.height ? `Height: ${d.height} cm` : '',
+  d.armReach ? `Reach: ${d.armReach} cm` : ''
+].filter(Boolean).join(' • ');
 
     const skillsList = (d.skills || '')
       .split('|').map(s => s.trim()).filter(Boolean)
