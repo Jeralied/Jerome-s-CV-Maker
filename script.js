@@ -164,7 +164,14 @@ function collectData() {
     .map(e => {
       const head = [esc(e.role), esc(e.company)].filter(Boolean).join(' — ');
       const date = e.dates ? ` (${esc(e.dates)})` : '';
-      return `${head}${date}${e.desc ? '\n' + esc(e.desc) : ''}`;
+     const experienceData = experiences
+  .filter(e => e.role || e.company || e.dates || e.desc)
+  .map(e => ({
+    role: esc(e.role),
+    company: esc(e.company),
+    dates: esc(e.dates),
+    desc: esc(e.desc)
+  }));
     }).join('\n\n');
 
   const eduStr = educations
@@ -183,7 +190,7 @@ function collectData() {
     linkedin: esc(document.getElementById('linkedin').value),
     summary: esc(document.getElementById('summary').value),
     skills: skills.map(esc).join(' | '),
-    experience: expStr,
+    experience: experienceData,
     education: eduStr,
     certs: esc(document.getElementById('certs').value),
     photo: photoData,
