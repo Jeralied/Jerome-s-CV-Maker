@@ -22,7 +22,13 @@ let cvFontFamily = 'default';
 let cvFontScale = 1;
 
 function esc(s) {
-  return (s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  return String(s || '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[c]));
 }
 
 /* ---------- Track selection ---------- */
