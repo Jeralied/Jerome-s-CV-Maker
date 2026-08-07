@@ -443,10 +443,51 @@ function renderSkillChips() {
 /* ---------- Collect data ---------- */
 
 function collectData() {
-  const getValue = id => {
-    const el = document.getElementById(id);
-    return el ? el.value.trim() : '';
+  const experienceData = experiences
+    .filter(e => e.role || e.company || e.dates || e.desc)
+    .map(e => ({
+      role: esc(e.role),
+      company: esc(e.company),
+      dates: esc(e.dates),
+      desc: esc(e.desc)
+    }));
+
+  const eduStr = educations
+    .filter(e => e.degree || e.school || e.year)
+    .map(e => {
+      const head = [esc(e.degree), esc(e.school)]
+        .filter(Boolean)
+        .join(' — ');
+
+      return `${head}${e.year ? ' (' + esc(e.year) + ')' : ''}`;
+    })
+    .join('\n');
+
+  return {
+    name: esc(document.getElementById('fullName').value),
+    title: esc(document.getElementById('roleTitle').value),
+    email: esc(document.getElementById('email').value),
+    phone: esc(document.getElementById('phone').value),
+    location: esc(document.getElementById('location').value),
+    linkedin: esc(document.getElementById('linkedin').value),
+    summary: esc(document.getElementById('summary').value),
+
+    skills: skills.map(esc).join('|'),
+    experience: experienceData,
+    education: eduStr,
+    certs: esc(document.getElementById('certs').value),
+    photo: photoData,
+
+    // Cabin crew fields
+    age: esc(document.getElementById('age').value),
+    nationality: esc(document.getElementById('nationality').value),
+    height: esc(document.getElementById('height').value),
+    armReach: esc(document.getElementById('armReach').value),
+    swimming: esc(document.getElementById('swimming').value),
+    languages: esc(document.getElementById('languages').value),
+    cabinTraining: esc(document.getElementById('cabinTraining').value)
   };
+}
 
   const experienceData = experiences
     .filter(e =>
@@ -1115,90 +1156,6 @@ function updateATS(data) {
   document.getElementById(
     'atsNote'
   ).textContent = note;
-}
-
-/* ---------- Cabin readiness ---------- */
-
-function updateCabinEligibility(data) {
-  const bar =
-    document.getElementById(
-      'cabinReadinessBar'
-    );
-
-  if (
-    !bar ||
-    bar.style.display === 'none'
-  ) {
-    return;
-  }
-
-  const checks = {
-    age:
-      Number(data.age) >= 21,
-
-    height:
-      Number(data.height) >= 160,
-
-    reach:
-      Number(data.armReach) >= 212,
-
-    english:
-      /english/i.test(data.languages || ''),
-
-    experience:
-      data.experience.some(
-        exp =>
-          exp.company &&
-          exp.dates &&
-          exp.desc
-      ),
-
-    education:
-      data.education.length > 0,
-
-    swimming:
-      data.swimming === 'Yes'
-  };
-
-  const total =
-    Object.keys(checks).length;
-
-  const passed =
-    Object.values(checks)
-      .filter(Boolean).length;
-
-  const readiness =
-    Math.round((passed / total) * 100);
-
-  let note;
-
-  if (readiness >= 85) {
-    note = 'strong profile';
-  } else if (readiness >= 60) {
-    note = 'some requirements still need attention';
-  } else {
-    note = 'complete more cabin crew details';
-  }
-
-  const score =
-    document.getElementById(
-      'cabinReadinessScore'
-    );
-
-  const noteEl =
-    document.getElementById(
-      'cabinReadinessNote'
-    );
-
-  if (score) {
-    score.textContent =
-      `${readiness}%`;
-  }
-
-  if (noteEl) {
-    noteEl.textContent =
-      note;
-  }
 }
 
 /* ---------- PDF ---------- */
