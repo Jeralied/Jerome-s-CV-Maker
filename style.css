@@ -256,7 +256,7 @@ body{
 .cv h2{margin:0; font-weight:500;}
 .cv .section{margin-top:16px; break-inside:avoid; page-break-inside:avoid;}
 .exp-block{break-inside:avoid; page-break-inside:avoid;}
-.header-tech, .header-cabin, .header-corporate, .header-cabin-emirates{break-after:avoid; page-break-after:avoid;}
+.header-tech, .header-cabin, .header-corporate, .header-cabin-premium{break-after:avoid; page-break-after:avoid;}
 .cv .section h3{
   font-family:var(--font-mono); font-size:calc(10.5px * var(--cv-scale, 1)); letter-spacing:0.08em; text-transform:uppercase;
   margin:0 0 8px; padding-bottom:5px; border-bottom:1px solid var(--paper-line);
@@ -280,7 +280,7 @@ body{
 }
 
 /* Cabin (legacy layout — kept in case it's reused; the live cabin template
-   now uses .cv-cabin-emirates below) */
+   now uses .cv-cabin-premium below) */
 .header-cabin{display:flex; gap:16px; align-items:flex-start;}
 .photo-border{
   width:76px; height:76px; border-radius:50%; object-fit:cover; flex-shrink:0;
@@ -333,31 +333,31 @@ body{
   #sheetLive{position:absolute; left:0; top:0; width:100%; box-shadow:none; padding:20mm;}
 }
 
-/* ---------- Emirates-style cabin crew layout ----------
+/* ---------- Airline-style cabin crew layout ----------
    Deliberately built with flexbox, not CSS Grid: html2canvas (used for the
    PDF export) does not render CSS Grid reliably — grid tracks and
    `display:contents` children were the exact cause of the earlier
    "blank column" PDF bug, so this layout avoids both. */
-.cv-cabin-emirates{background:#000; color:#fff; padding:0; display:block;}
-.header-cabin-emirates{display:flex; align-items:stretch;}
-.header-cabin-emirates .header-left{flex:1; min-width:0; background:#fff; color:#000; padding:30px;}
-.header-cabin-emirates .header-right{flex:0 0 140px; width:140px; background:#000;}
+.cv-cabin-premium{background:#000; color:#fff; padding:0; display:block;}
+.header-cabin-premium{display:flex; align-items:stretch;}
+.header-cabin-premium .header-left{flex:1; min-width:0; background:#fff; color:#000; padding:30px;}
+.header-cabin-premium .header-right{flex:0 0 140px; width:140px; background:#000;}
 .passport-photo{
   width:100%; height:auto; aspect-ratio:3/4; object-fit:cover; object-position:50% 20%; display:block;
 }
-.cv-cabin-emirates .photo-placeholder{
+.cv-cabin-premium .photo-placeholder{
   width:100%; aspect-ratio:3/4; background:#333; color:#999;
   display:flex; align-items:center; justify-content:center; font-size:10px;
 }
-.cv-cabin-emirates h1{font-family:var(--font-display); font-size:calc(28px * var(--cv-scale, 1)); margin:0; color:#000;}
-.cv-cabin-emirates h2{font-size:calc(14px * var(--cv-scale, 1)); letter-spacing:2px; color:#444; margin:4px 0 8px; font-weight:600;}
-.cv-cabin-emirates .contact-line{font-size:calc(10px * var(--cv-scale, 1)); color:#555; margin-top:0;}
-.cv-cabin-emirates .personal-line{
+.cv-cabin-premium h1{font-family:var(--font-display); font-size:calc(28px * var(--cv-scale, 1)); margin:0; color:#000;}
+.cv-cabin-premium h2{font-size:calc(14px * var(--cv-scale, 1)); letter-spacing:2px; color:#444; margin:4px 0 8px; font-weight:600;}
+.cv-cabin-premium .contact-line{font-size:calc(10px * var(--cv-scale, 1)); color:#555; margin-top:0;}
+.cv-cabin-premium .personal-line{
   background:#fff; color:#000; padding:0 30px 10px; font-size:calc(10px * var(--cv-scale, 1)); font-weight:500;
 }
-.cv-cabin-emirates .section{background:#fff; color:#000; padding:0 30px 20px;}
-.cv-cabin-emirates .section h3{
+.cv-cabin-premium .section{background:#fff; color:#000; padding:0 30px 20px;}
+.cv-cabin-premium .section h3{
   font-size:calc(11px * var(--cv-scale, 1)); letter-spacing:1px; color:#000;
   border-bottom:1px solid #ccc; padding-bottom:4px; margin-bottom:8px;
 }
-.cv-cabin-emirates .plain-skills{list-style:disc; padding-left:16px; margin:0; font-size:calc(11px * var(--cv-scale, 1));}
+.cv-cabin-premium .plain-skills{list-style:disc; padding-left:16px; margin:0; font-size:calc(11px * var(--cv-scale, 1));}
