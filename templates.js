@@ -27,7 +27,7 @@ const TEMPLATES = {
     </div>`;
   },
 
-  // Emirates-style cabin crew CV: black/white split header with a portrait
+  // Airline-style cabin crew CV: black/white split header with a portrait
   // photo panel, a "personal details" strip (age, height, arm reach, etc.),
   // then customer-service-forward sections.
   cabin: (d) => {
@@ -48,8 +48,8 @@ const TEMPLATES = {
       .map(s => `<li>${s}</li>`).join('');
 
     return `
-    <div class="cv cv-cabin-emirates">
-      <div class="header-cabin-emirates">
+    <div class="cv cv-cabin-premium">
+      <div class="header-cabin-premium">
         <div class="header-left">
           <h1>${d.name || 'YOUR NAME'}</h1>
           <h2>${d.title || 'CABIN CREW'}</h2>
